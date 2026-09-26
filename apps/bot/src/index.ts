@@ -11,6 +11,7 @@ import logger from './config/logger';
 import { loadEvents } from './utils/event-loader';
 import { loadCommands } from './utils/command-loader';
 import { startReminderPoller, stopReminderPoller } from './services/reminder-poller';
+import { startAnalyticsFlusher, flushAnalytics } from './utils/analytics';
 
 async function main(): Promise<BotClient> {
     try {
@@ -47,6 +48,9 @@ async function main(): Promise<BotClient> {
 
             // Start the reminder delivery poller
             startReminderPoller(client);
+
+            // Start batched analytics flushing (30s interval)
+            startAnalyticsFlusher();
         } else {
             logger.warn('⚠️ No bot token found, skipping Discord login');
         }
@@ -95,6 +99,7 @@ async function shutdown(signal: string, client?: BotClient) {
 
     try {
         stopReminderPoller();
+        await flushAnalytics().catch(() => {});
         client?.destroy();
         logger.info('👋 Shutdown complete');
     } finally {

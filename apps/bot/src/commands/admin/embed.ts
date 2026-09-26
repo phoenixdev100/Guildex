@@ -88,7 +88,12 @@ export const embed: Command = {
             await interaction.editReply({ content: `✅ Embed posted in ${channel}.` });
         } catch (error: any) {
             console.error('embed command error:', error);
-            await interaction.reply({ content: `❌ Failed to create embed: ${error.message ?? 'Unknown error'}`, flags: MessageFlags.Ephemeral });
+            const content = `❌ Failed to create embed: ${error.message ?? 'Unknown error'}`;
+            if (interaction.deferred || interaction.replied) {
+                await interaction.editReply({ content }).catch(() => {});
+            } else {
+                await interaction.reply({ content, flags: MessageFlags.Ephemeral }).catch(() => {});
+            }
         }
     }
 };

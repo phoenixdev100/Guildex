@@ -27,7 +27,12 @@ export const servername: Command = {
             await interaction.reply({ content: `✅ Server renamed: **${oldName}** → **${name}**` });
         } catch (error: any) {
             console.error('servername error:', error);
-            await interaction.reply({ content: `❌ Failed to rename: ${error.message ?? 'Unknown error'}`, flags: MessageFlags.Ephemeral });
+            const content = `❌ Failed to rename: ${error.message ?? 'Unknown error'}`;
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({ content, flags: MessageFlags.Ephemeral }).catch(() => {});
+            } else {
+                await interaction.reply({ content, flags: MessageFlags.Ephemeral }).catch(() => {});
+            }
         }
     },
 };

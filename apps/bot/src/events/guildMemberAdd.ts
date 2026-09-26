@@ -8,6 +8,7 @@ import type { GuildMember } from 'discord.js';
 import type { BotClient } from '../client';
 import logger from '../config/logger';
 import { apiClient } from '../utils/api-client';
+import { trackJoin } from '../utils/analytics';
 
 interface AutorolesResponse {
     success?: boolean;
@@ -19,6 +20,7 @@ export async function handleGuildMemberAdd(
     member: GuildMember
 ): Promise<void> {
     try {
+        trackJoin(member.guild.id);
         const response = await apiClient.get<AutorolesResponse>(
             `/guilds/${member.guild.id}/autoroles`
         );

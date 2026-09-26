@@ -82,7 +82,12 @@ export const announce: Command = {
             await interaction.editReply({ content: `✅ Announcement sent to ${channel}${pingDesc}.` });
         } catch (error: any) {
             console.error('announce command error:', error);
-            await interaction.reply({ content: `❌ Failed to send announcement: ${error.message ?? 'Unknown error'}`, flags: MessageFlags.Ephemeral });
+            const content = `❌ Failed to send announcement: ${error.message ?? 'Unknown error'}`;
+            if (interaction.deferred || interaction.replied) {
+                await interaction.editReply({ content }).catch(() => {});
+            } else {
+                await interaction.reply({ content, flags: MessageFlags.Ephemeral }).catch(() => {});
+            }
         }
     }
 };

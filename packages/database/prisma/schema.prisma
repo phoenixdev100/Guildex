@@ -62,6 +62,10 @@ model Guild {
   autoRoles          AutoRole[]
   reactionRoles      ReactionRole[]
   afkStatuses        AfkStatus[]
+  dailyStats         GuildDailyStat[]
+  commandStats       CommandStat[]
+  channelStats       ChannelStat[]
+  userStats          UserStat[]
 
   @@map("guilds")
 }
@@ -677,4 +681,61 @@ model AfkStatus {
 
   @@unique([guildId, userId])
   @@map("afk_statuses")
+}
+
+// ── Analytics ────────────────────────────────────────────────────
+
+model GuildDailyStat {
+  id       String   @id @default(cuid())
+  guildId  String
+  date     String // YYYY-MM-DD (UTC)
+  joins    Int      @default(0)
+  leaves   Int      @default(0)
+  messages Int      @default(0)
+  commands Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, date])
+  @@map("guild_daily_stats")
+}
+
+model CommandStat {
+  id      String  @id @default(cuid())
+  guildId String
+  command String
+  count   Int     @default(0)
+
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, command])
+  @@map("command_stats")
+}
+
+model ChannelStat {
+  id        String   @id @default(cuid())
+  guildId   String
+  channelId String
+  messages  Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, channelId])
+  @@map("channel_stats")
+}
+
+model UserStat {
+  id       String   @id @default(cuid())
+  guildId  String
+  userId   String
+  messages Int      @default(0)
+  commands Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, userId])
+  @@map("user_stats")
 }
