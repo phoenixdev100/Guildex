@@ -1,24 +1,33 @@
-import { SlashCommandBuilder, EmbedBuilder, MessageFlags } from 'discord.js';
+/**
+ * Apply Command
+ *
+ * Start an application — picks a form, walks through modal
+ * question pages, and submits for staff review.
+ */
+
+import { SlashCommandBuilder, MessageFlags } from 'discord.js';
 import type { Command } from '../../types/command';
+import { startApplication } from '../../utils/application-flow';
 
 export const apply: Command = {
     data: new SlashCommandBuilder()
         .setName('apply')
-        .setDescription('Apply for a staff position via an application form')
+        .setDescription('Apply for a position/role in this server')
         .setDMPermission(false),
     category: 'applications',
+
     async execute(interaction) {
         if (!interaction.guild) return;
         try {
-            const embed = new EmbedBuilder()
-                .setColor('#5865F2')
-                .setTitle('🚧 Command In Development')
-                .setDescription('This command is currently being developed and will be available soon!')
-                .setTimestamp();
-            await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+            await startApplication(interaction);
         } catch (error: any) {
             console.error('apply command error:', error);
-            await interaction.reply({ content: '❌ An error occurred', flags: MessageFlags.Ephemeral });
+            const content = '❌ Could not start the application — please try again.';
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({ content, flags: MessageFlags.Ephemeral }).catch(() => {});
+            } else {
+                await interaction.reply({ content, flags: MessageFlags.Ephemeral }).catch(() => {});
+            }
         }
-    },
+    }
 };

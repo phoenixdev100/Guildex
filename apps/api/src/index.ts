@@ -24,6 +24,7 @@ import { remindersRoutes } from './routes/reminders';
 import { dashboardRoutes } from './routes/dashboard';
 import { featureRoutes } from './routes/features';
 import { analyticsRoutes } from './routes/analytics';
+import { applicationRoutes } from './routes/applications';
 
 async function main() {
     try {
@@ -65,6 +66,7 @@ async function main() {
         await app.register(dashboardRoutes, { prefix: '/api/dashboard' });
         await app.register(featureRoutes, { prefix: '/api' });
         await app.register(analyticsRoutes, { prefix: '/api' });
+        await app.register(applicationRoutes, { prefix: '/api' });
 
         // Start server
         await app.listen({

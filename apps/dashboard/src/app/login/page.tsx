@@ -47,7 +47,7 @@ function LoginForm() {
 
                 {/* Login Button */}
                 <button
-                    onClick={() => signIn('discord', { callbackUrl: '/dashboard' })}
+                    onClick={() => signIn('discord', { callbackUrl: '/select-server' })}
                     className="w-full flex items-center justify-center gap-3 px-6 py-3 text-white gradient-primary rounded-md hover:opacity-90 transition-opacity font-medium"
                 >
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

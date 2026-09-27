@@ -33,12 +33,70 @@ export async function dashboardRoutes(app: FastifyInstance): Promise<void> {
     });
 
     /**
+     * GET /api/dashboard/me
+     * Current user's identity + role — the dashboard uses this to
+     * show the owner-only admin navigation.
+     */
+    app.get('/me', async (request) => {
+        return {
+            discordId: discordUserId(request),
+            isSuperAdmin: isSuperAdminRequest(request),
+        };
+    });
+
+    /**
+     * GET /api/dashboard/admin/overview
+     * Global platform stats across ALL guilds — super admin only.
+     */
+    app.get('/admin/overview', async (request, reply) => {
+        if (!isSuperAdminRequest(request)) {
+            return reply.status(403).send({ error: 'Forbidden' });
+        }
+        try {
+            const [guilds, users, submissions, pendingSubs, blacklist, commandStats] = await Promise.all([
+                prisma.guild.findMany({
+                    include: { _count: { select: { users: true, modules: { where: { isEnabled: true } } } } },
+                    orderBy: { joinedAt: 'desc' },
+                }),
+                prisma.user.count(),
+                prisma.applicationSubmission.count(),
+                prisma.applicationSubmission.count({ where: { status: 'pending' } }),
+                prisma.applicationBlacklist.count(),
+                prisma.customCommand.aggregate({ _sum: { usageCount: true } }),
+            ]);
+
+            return {
+                totalGuilds: guilds.length,
+                activeGuilds: guilds.filter(g => g.isActive).length,
+                totalUsers: users,
+                totalSubmissions: submissions,
+                pendingSubmissions: pendingSubs,
+                blacklistedUsers: blacklist,
+                commandsUsed: commandStats._sum.usageCount ?? 0,
+                guilds: guilds.map(g => ({
+                    id: g.id,
+                    name: g.name,
+                    icon: g.icon,
+                    ownerId: g.ownerId,
+                    isActive: g.isActive,
+                    joinedAt: g.joinedAt,
+                    memberCount: g._count.users,
+                    enabledModules: g._count.modules,
+                })),
+            };
+        } catch (error) {
+            request.log.error(error);
+            return reply.status(500).send({ error: 'Failed to fetch overview' });
+        }
+    });
+
+    /**
      * GET /api/dashboard/stats
      * Get overall dashboard statistics
      */
     app.get('/stats', async (request, reply) => {
         try {
-            const allowed = request.allowedGuildIds ?? new Set<string>();
+            const allowed = request.allowedGuildIds === undefined ? new Set<string>() : request.allowedGuildIds;
             const guildFilter = allowed === null ? {} : { guildId: { in: [...allowed] } };
 
             // Get total guilds
@@ -80,7 +138,7 @@ export async function dashboardRoutes(app: FastifyInstance): Promise<void> {
      */
     app.get('/guilds', async (request, reply) => {
         try {
-            const allowed = request.allowedGuildIds ?? new Set<string>();
+            const allowed = request.allowedGuildIds === undefined ? new Set<string>() : request.allowedGuildIds;
             const guilds = await prisma.guild.findMany({
                 where: allowed === null ? { isActive: true } : { isActive: true, id: { in: [...allowed] } },
                 include: {
@@ -126,7 +184,7 @@ export async function dashboardRoutes(app: FastifyInstance): Promise<void> {
      */
     app.get('/modules', async (request, reply) => {
         try {
-            const allowed = request.allowedGuildIds ?? new Set<string>();
+            const allowed = request.allowedGuildIds === undefined ? new Set<string>() : request.allowedGuildIds;
             const modules = await prisma.module.findMany({
                 include: {
                     guilds: {
@@ -158,7 +216,7 @@ export async function dashboardRoutes(app: FastifyInstance): Promise<void> {
      */
     app.get('/activity', async (request, reply) => {
         try {
-            const allowed = request.allowedGuildIds ?? new Set<string>();
+            const allowed = request.allowedGuildIds === undefined ? new Set<string>() : request.allowedGuildIds;
             const scoped = allowed === null ? {} : { guildId: { in: [...allowed] } };
 
             // Fetch recent audit logs for activity feed
@@ -248,7 +306,7 @@ export async function dashboardRoutes(app: FastifyInstance): Promise<void> {
     app.get('/logs', async (request, reply) => {
         const { page = 1, limit = 50 } = request.query as { page: number, limit: number };
         const skip = (page - 1) * limit;
-        const allowed = request.allowedGuildIds ?? new Set<string>();
+        const allowed = request.allowedGuildIds === undefined ? new Set<string>() : request.allowedGuildIds;
         const scoped = allowed === null ? {} : { guildId: { in: [...allowed] } };
 
         try {

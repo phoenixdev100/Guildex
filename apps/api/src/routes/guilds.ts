@@ -303,4 +303,43 @@ export async function guildRoutes(app: FastifyInstance): Promise<void> {
             return reply.status(500).send({ success: false, error: 'Failed to fetch roles' });
         }
     });
+
+    /**
+     * GET /api/guilds/:guildId/discord-channels
+     * Live channel list from Discord (for config pickers in the dashboard).
+     */
+    app.get('/:guildId/discord-channels', async (request, reply) => {
+        const { guildId } = request.params as { guildId: string };
+
+        if (!env.DISCORD_BOT_TOKEN) {
+            return reply.status(503).send({ success: false, error: 'Bot token not configured on the API' });
+        }
+
+        try {
+            const res = await fetch(`https://discord.com/api/v10/guilds/${guildId}/channels`, {
+                headers: { Authorization: `Bot ${env.DISCORD_BOT_TOKEN}` },
+            });
+
+            if (!res.ok) {
+                const body = await res.text().catch(() => '');
+                request.log.warn({ status: res.status, body, guildId }, 'Discord channels fetch failed');
+                return reply.status(res.status).send({ success: false, error: 'Failed to fetch channels from Discord' });
+            }
+
+            const channels = (await res.json()) as Array<{
+                id: string; name: string; type: number; position: number;
+            }>;
+
+            return {
+                success: true,
+                data: channels
+                    .filter(c => c.type === 0) // text channels only
+                    .sort((a, b) => a.position - b.position)
+                    .map(c => ({ id: c.id, name: c.name })),
+            };
+        } catch (error) {
+            request.log.error({ error, guildId }, 'Failed to fetch Discord channels');
+            return reply.status(500).send({ success: false, error: 'Failed to fetch channels' });
+        }
+    });
 }

@@ -26,6 +26,13 @@ interface Server {
     memberCount: number;
 }
 
+interface GuildModule {
+    name: string;
+    category: string;
+    description: string | null;
+    enabled: boolean;
+}
+
 export default function GuildDetailPage() {
     const params = useParams();
     const guildId = params.guildId as string;
@@ -33,6 +40,8 @@ export default function GuildDetailPage() {
     const [server, setServer] = useState<Server | null>(null);
     const [roles, setRoles] = useState<Role[]>([]);
     const [adminRoleId, setAdminRoleId] = useState<string>('');
+    const [modules, setModules] = useState<GuildModule[]>([]);
+    const [toggling, setToggling] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
@@ -44,10 +53,11 @@ export default function GuildDetailPage() {
 
     const load = async () => {
         try {
-            const [guildsRes, rolesRes, adminRes] = await Promise.all([
+            const [guildsRes, rolesRes, adminRes, modulesRes] = await Promise.all([
                 fetch('/api/dashboard/guilds'),
                 fetch(`/api/guilds/${guildId}/discord-roles`),
                 fetch(`/api/guilds/${guildId}/admin-role`),
+                fetch(`/api/guilds/${guildId}/modules`),
             ]);
 
             if (guildsRes.ok) {
@@ -61,6 +71,10 @@ export default function GuildDetailPage() {
             if (adminRes.ok) {
                 const data = await adminRes.json();
                 setAdminRoleId(data.data?.adminRoleId ?? '');
+            }
+            if (modulesRes.ok) {
+                const data = await modulesRes.json();
+                setModules(data.modules ?? []);
             }
         } catch (error) {
             console.error('Failed to load guild:', error);
@@ -88,6 +102,27 @@ export default function GuildDetailPage() {
             setMessage({ type: 'err', text: '❌ Failed to save admin role' });
         } finally {
             setSaving(false);
+        }
+    };
+
+    const toggleModule = async (name: string, enabled: boolean) => {
+        setToggling(name);
+        try {
+            const res = await fetch(`/api/guilds/${guildId}/modules/${name}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ enabled }),
+            });
+            if (res.ok) {
+                setModules(prev => prev.map(m => m.name === name ? { ...m, enabled } : m));
+            } else {
+                const err = await res.json().catch(() => ({}));
+                setMessage({ type: 'err', text: `❌ ${err.error ?? 'Toggle failed'}` });
+            }
+        } catch {
+            setMessage({ type: 'err', text: '❌ Failed to toggle module' });
+        } finally {
+            setToggling(null);
         }
     };
 
@@ -156,6 +191,48 @@ export default function GuildDetailPage() {
                         {message.text}
                     </p>
                 )}
+            </div>
+
+            {/* Applications Manager */}
+            <Link
+                href={`/dashboard/servers/${guildId}/applications`}
+                className="glass rounded-xl p-6 border border-border/50 max-w-2xl flex items-center justify-between hover:border-primary/50 transition-colors group"
+            >
+                <div>
+                    <h2 className="text-xl font-bold text-foreground mb-1">📝 Applications</h2>
+                    <p className="text-sm text-muted-foreground">
+                        Build application forms, manage questions, review submissions — powers <code className="bg-secondary px-1 rounded">/apply</code>.
+                    </p>
+                </div>
+                <span className="text-2xl text-muted-foreground group-hover:text-primary transition-colors">→</span>
+            </Link>
+
+            {/* Modules */}
+            <div className="glass rounded-xl p-6 border border-border/50">
+                <h2 className="text-xl font-bold text-foreground mb-1">🧩 Modules</h2>
+                <p className="text-sm text-muted-foreground mb-6">
+                    Toggle feature categories for this server — disabled modules block their commands instantly.
+                </p>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {modules.map(m => (
+                        <div key={m.name} className="flex items-center justify-between bg-secondary/30 rounded-lg px-4 py-3 border border-border/30">
+                            <div className="min-w-0">
+                                <p className="text-sm font-medium text-foreground truncate">{m.name}</p>
+                                <p className="text-xs text-muted-foreground truncate">{m.category}</p>
+                            </div>
+                            <button
+                                onClick={() => toggleModule(m.name, !m.enabled)}
+                                disabled={toggling === m.name}
+                                className={`ml-3 shrink-0 w-11 h-6 rounded-full transition-colors relative ${m.enabled ? 'bg-green-500' : 'bg-secondary'}`}
+                            >
+                                <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${m.enabled ? 'left-[22px]' : 'left-0.5'}`} />
+                            </button>
+                        </div>
+                    ))}
+                    {modules.length === 0 && (
+                        <p className="text-sm text-muted-foreground col-span-full">No modules registered — invite the bot to this server first.</p>
+                    )}
+                </div>
             </div>
         </div>
     );
