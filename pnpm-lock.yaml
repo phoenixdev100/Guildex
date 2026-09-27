@@ -155,6 +155,9 @@ importers:
 
   apps/dashboard:
     dependencies:
+      lucide-react:
+        specifier: 0.462.0
+        version: 0.462.0(react@18.3.1)
       next:
         specifier: 15.5.26
         version: 15.5.26(@types/node@20.19.30)(react-dom@18.3.1)(react@18.3.1)
@@ -3709,6 +3712,14 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       yallist: 4.0.0
+    dev: false
+
+  /lucide-react@0.462.0(react@18.3.1):
+    resolution: {integrity: sha512-NTL7EbAao9IFtuSivSZgrAh4fZd09Lr+6MTkqIxuHaH2nnYiYIzXPo06cOxHg9wKLdj6LL8TByG4qpePqwgx/g==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
+    dependencies:
+      react: 18.3.1
     dev: false
 
   /magic-bytes.js@1.13.0:
