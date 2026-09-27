@@ -66,6 +66,9 @@ model Guild {
   commandStats       CommandStat[]
   channelStats       ChannelStat[]
   userStats          UserStat[]
+  applicationForms   ApplicationForm[]
+  applicationSubs    ApplicationSubmission[]
+  applicationBlacklist ApplicationBlacklist[]
 
   @@map("guilds")
 }
@@ -738,4 +741,59 @@ model UserStat {
 
   @@unique([guildId, userId])
   @@map("user_stats")
+}
+
+// ── Applications ─────────────────────────────────────────────────
+
+model ApplicationForm {
+  id              String   @id @default(cuid())
+  guildId         String
+  name            String
+  description     String?
+  questions       Json     @default("[]") // [{label, style: 'short'|'paragraph', required, placeholder?}]
+  staffRoleId     String?
+  acceptedRoleId  String?
+  logChannelId    String?
+  isOpen          Boolean  @default(true)
+  cooldownHours   Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  guild       Guild                   @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  submissions ApplicationSubmission[]
+
+  @@map("application_forms")
+}
+
+model ApplicationSubmission {
+  id         String    @id @default(cuid())
+  formId     String
+  guildId    String
+  userId     String
+  answers    Json      @default("[]") // [{question, answer}]
+  status     String    @default("pending") // pending | accepted | denied | withdrawn
+  reviewerId String?
+  reason     String?
+  createdAt  DateTime  @default(now())
+  reviewedAt DateTime?
+
+  guild Guild            @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  form  ApplicationForm  @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@index([guildId, status])
+  @@index([guildId, userId])
+  @@map("application_submissions")
+}
+
+model ApplicationBlacklist {
+  id        String   @id @default(cuid())
+  guildId   String
+  userId    String
+  reason    String?
+  createdAt DateTime @default(now())
+
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, userId])
+  @@map("application_blacklist")
 }

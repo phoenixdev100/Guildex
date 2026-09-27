@@ -10,6 +10,7 @@ import logger from '../config/logger';
 import { apiClient } from '../utils/api-client';
 import { getAdminRoleId } from '../utils/admin-role';
 import { trackCommand } from '../utils/analytics';
+import { handleApplicationButton, handleApplicationSelect, handleApplicationModal } from '../utils/application-flow';
 
 export async function handleInteractionCreate(
     client: BotClient,
@@ -138,6 +139,12 @@ export async function handleInteractionCreate(
         );
 
         try {
+            // Application system buttons (accept/deny/next/withdraw)
+            if (interaction.customId.startsWith('app_')) {
+                await handleApplicationButton(client, interaction);
+                return;
+            }
+
             // Handle bot mention buttons
             if (interaction.customId === 'view_commands') {
                 await interaction.reply({
@@ -176,6 +183,12 @@ export async function handleInteractionCreate(
         );
 
         try {
+            // Application form picker
+            if (interaction.customId.startsWith('app_pick_')) {
+                await handleApplicationSelect(interaction);
+                return;
+            }
+
             // Handle setup wizard select menu
             if (interaction.customId === 'setup_module') {
                 const selectedModule = interaction.values[0];
@@ -249,6 +262,16 @@ export async function handleInteractionCreate(
             },
             'Modal submission'
         );
-        // Modal handlers will be implemented in modules
+        try {
+            if (interaction.customId.startsWith('app_')) {
+                await handleApplicationModal(client, interaction);
+                return;
+            }
+        } catch (error) {
+            logger.error({ error, customId: interaction.customId }, 'Modal submission failed');
+            if (!interaction.replied && !interaction.deferred) {
+                await interaction.reply({ content: '❌ An error occurred processing the form.', ephemeral: true }).catch(() => {});
+            }
+        }
     }
 }

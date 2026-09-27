@@ -12,6 +12,7 @@
  */
 
 import type { FastifyRequest } from 'fastify';
+import { env } from '../config/env';
 
 const DISCORD_API = 'https://discord.com/api/v10';
 const CACHE_TTL_MS = 5 * 60 * 1000;
@@ -38,15 +39,23 @@ async function fetchManageableGuilds(token: string): Promise<Set<string>> {
         return cached.guildIds;
     }
 
-    const res = await fetch(`${DISCORD_API}/users/@me/guilds`, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
+    let res: Response;
+    try {
+        res = await fetch(`${DISCORD_API}/users/@me/guilds`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    } catch (err) {
+        // Network failure — don't cache, let the next request retry
+        console.error('[guild-access] Discord /users/@me/guilds request failed:', err);
+        return new Set();
+    }
 
     if (!res.ok) {
-        // Invalid/expired token → treat as no access
-        const empty = new Set<string>();
-        guildCache.set(token, { guildIds: empty, fetchedAt: Date.now() });
-        return empty;
+        // Invalid/expired token or transient Discord error — don't cache
+        // failures; a cached empty set would lock the user out for 5 min.
+        const body = await res.text().catch(() => '');
+        console.error(`[guild-access] Discord /users/@me/guilds → ${res.status}: ${body.slice(0, 200)}`);
+        return new Set();
     }
 
     const guilds = (await res.json()) as DiscordGuildEntry[];
@@ -59,6 +68,7 @@ async function fetchManageableGuilds(token: string): Promise<Set<string>> {
         }
     }
 
+    // Only cache successful fetches
     guildCache.set(token, { guildIds: manageable, fetchedAt: Date.now() });
     return manageable;
 }
@@ -70,6 +80,11 @@ async function fetchManageableGuilds(token: string): Promise<Set<string>> {
  */
 export async function getAllowedGuildIds(request: FastifyRequest): Promise<Set<string> | null> {
     const discordToken = request.headers['x-discord-token'] as string | undefined;
+
+    // Bot owner / super admin sees every guild
+    if (env.SUPER_ADMIN_ID && discordUserId(request) === env.SUPER_ADMIN_ID) {
+        return null;
+    }
 
     if (!discordToken) {
         // Bot / service traffic — trusted via internal API key
