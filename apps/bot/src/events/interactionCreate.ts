@@ -9,6 +9,7 @@ import type { BotClient } from '../client';
 import logger from '../config/logger';
 import { apiClient } from '../utils/api-client';
 import { getAdminRoleId } from '../utils/admin-role';
+import { trackCommand } from '../utils/analytics';
 
 export async function handleInteractionCreate(
     client: BotClient,
@@ -31,6 +32,9 @@ export async function handleInteractionCreate(
             });
             return;
         }
+
+        // Track command usage for analytics
+        trackCommand(interaction.guildId, interaction.commandName, interaction.user.id);
 
         // Check if module is enabled (optional - if API is down, allow command)
         // Exempt critical commands that should always work

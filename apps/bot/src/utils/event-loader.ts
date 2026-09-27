@@ -12,6 +12,7 @@ import { handleReady } from '../events/ready';
 import { handleGuildCreate } from '../events/guildCreate';
 import { handleGuildDelete } from '../events/guildDelete';
 import { handleGuildMemberAdd } from '../events/guildMemberAdd';
+import { handleGuildMemberRemove } from '../events/guildMemberRemove';
 import { handleInteractionCreate } from '../events/interactionCreate';
 import { handleMessageCreate } from '../events/messageCreate';
 import { handleMessageReactionAdd, handleMessageReactionRemove } from '../events/messageReactionAdd';
@@ -26,6 +27,7 @@ export function loadEvents(client: BotClient): void {
     client.on('guildCreate', (guild) => handleGuildCreate(client, guild));
     client.on('guildDelete', (guild) => handleGuildDelete(client, guild));
     client.on('guildMemberAdd', (member) => handleGuildMemberAdd(client, member));
+    client.on('guildMemberRemove', (member) => handleGuildMemberRemove(client, member));
 
     // Reaction role events
     client.on('messageReactionAdd', (reaction, user) =>

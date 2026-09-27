@@ -8,6 +8,7 @@ import { Message, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } f
 import type { BotClient } from '../client';
 import logger from '../config/logger';
 import { apiClient } from '../utils/api-client';
+import { trackMessage } from '../utils/analytics';
 
 // Per-guild XP cooldowns and module status cache
 const xpCooldowns = new Map<string, number>();
@@ -139,6 +140,7 @@ export async function handleMessageCreate(
 
     // Award XP + handle AFK for guild messages (fire-and-forget)
     if (message.guild) {
+        trackMessage(message.guild.id, message.channelId, message.author.id);
         awardXp(message).catch(() => {});
         handleAfk(message).catch(() => {});
     }

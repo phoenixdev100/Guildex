@@ -23,19 +23,30 @@ export const personality: Command = {
         if (!interaction.guild) return;
 
         const type = interaction.options.getString('type', true);
-        getMemory(interaction.user.id).personality = type;
 
-        const previews: Record<string, string> = {
-            default: 'Balanced, helpful, friendly.',
-            professional: 'Formal, precise, structured.',
-            casual: 'Chill and relaxed, like a friend.',
-            funny: 'Witty — answers with humor.',
-            roast: 'Playfully roasts you while answering.',
-        };
+        try {
+            getMemory(interaction.user.id).personality = type;
 
-        await interaction.reply({
-            content: `🎭 Personality set to **${type}** — ${previews[type] ?? ''}\nTry it with \`/ai chat\`.`,
-            flags: MessageFlags.Ephemeral,
-        });
+            const previews: Record<string, string> = {
+                default: 'Balanced, helpful, friendly.',
+                professional: 'Formal, precise, structured.',
+                casual: 'Chill and relaxed, like a friend.',
+                funny: 'Witty — answers with humor.',
+                roast: 'Playfully roasts you while answering.',
+            };
+
+            await interaction.reply({
+                content: `🎭 Personality set to **${type}** — ${previews[type] ?? ''}\nTry it with \`/ai chat\`.`,
+                flags: MessageFlags.Ephemeral,
+            });
+        } catch (error: any) {
+            console.error('personality command error:', error);
+            const content = '❌ Something went wrong setting your personality.';
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({ content, flags: MessageFlags.Ephemeral }).catch(() => {});
+            } else {
+                await interaction.reply({ content, flags: MessageFlags.Ephemeral }).catch(() => {});
+            }
+        }
     },
 };

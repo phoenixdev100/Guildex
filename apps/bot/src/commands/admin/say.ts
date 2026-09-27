@@ -46,7 +46,12 @@ export const say: Command = {
             await interaction.editReply({ content: `✅ Message sent to ${channel}.` });
         } catch (error: any) {
             console.error('say command error:', error);
-            await interaction.reply({ content: `❌ Failed to send message: ${error.message ?? 'Unknown error'}`, flags: MessageFlags.Ephemeral });
+            const content = `❌ Failed to send message: ${error.message ?? 'Unknown error'}`;
+            if (interaction.deferred || interaction.replied) {
+                await interaction.editReply({ content }).catch(() => {});
+            } else {
+                await interaction.reply({ content, flags: MessageFlags.Ephemeral }).catch(() => {});
+            }
         }
     }
 };

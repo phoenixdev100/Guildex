@@ -23,6 +23,7 @@ import { levelingRoutes } from './routes/leveling';
 import { remindersRoutes } from './routes/reminders';
 import { dashboardRoutes } from './routes/dashboard';
 import { featureRoutes } from './routes/features';
+import { analyticsRoutes } from './routes/analytics';
 
 async function main() {
     try {
@@ -63,6 +64,7 @@ async function main() {
         await app.register(remindersRoutes, { prefix: '/api' });
         await app.register(dashboardRoutes, { prefix: '/api/dashboard' });
         await app.register(featureRoutes, { prefix: '/api' });
+        await app.register(analyticsRoutes, { prefix: '/api' });
 
         // Start server
         await app.listen({
