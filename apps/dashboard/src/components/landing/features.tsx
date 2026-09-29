@@ -83,7 +83,7 @@ const BENTO: BentoTile[] = [
 
 export function Features() {
     return (
-        <section className="section" id="features">
+        <section className="section" id="features" style={{ paddingBottom: 'clamp(40px, 5vw, 64px)' }}>
             <div className="wrap">
                 <div className="secHead">
                     <div className="kicker">Platform</div>
