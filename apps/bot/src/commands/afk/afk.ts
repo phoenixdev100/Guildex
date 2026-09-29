@@ -1,9 +1,9 @@
 /**
  * AFK Command
  *
- * /afk set [reason]   — mark yourself AFK (auto-clears on your next message)
- * /afk remove         — clear your AFK status
- * /afk status [user]  — check if someone is AFK
+ * /afk set [reason]   - mark yourself AFK (auto-clears on your next message)
+ * /afk remove         - clear your AFK status
+ * /afk status [user]  - check if someone is AFK
  */
 
 import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, MessageFlags } from 'discord.js';
@@ -120,7 +120,7 @@ export const afk: Command = {
                     return;
                 }
 
-                const lines = list.map(a => `<@${a.userId}> — ${a.reason} *(${timeAgo(a.since)})*`);
+                const lines = list.map(a => `<@${a.userId}> - ${a.reason} *(${timeAgo(a.since)})*`);
                 const embed = new EmbedBuilder()
                     .setColor(0xfee75c)
                     .setTitle(`💤 AFK Members (${list.length})`)

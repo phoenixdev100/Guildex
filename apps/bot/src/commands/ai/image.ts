@@ -1,7 +1,7 @@
 /**
  * AIImage Command
  *
- * Generate an AI image from a text prompt (Pollinations — free, no key).
+ * Generate an AI image from a text prompt (Pollinations - free, no key).
  */
 
 import { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } from 'discord.js';
@@ -25,7 +25,7 @@ export const image: Command = {
         await interaction.deferReply();
 
         try {
-            // Generation takes 5–30s — download it ourselves and upload as
+            // Generation takes 5–30s - download it ourselves and upload as
             // an attachment (Discord's image proxy times out on embed URLs)
             const imageBuffer = await aiImage(prompt);
             const attachment = new AttachmentBuilder(imageBuffer, { name: 'ai-image.png' });

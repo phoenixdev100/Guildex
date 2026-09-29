@@ -2,7 +2,7 @@
 -- 1) permissions table becomes per-user override records (guildId/userId/effect/conditions)
 -- 2) new auto_roles table
 -- 3) new reaction_roles table
--- (guild_users relation field names were renamed in Prisma only — no DDL needed)
+-- (guild_users relation field names were renamed in Prisma only - no DDL needed)
 
 -- AlterTable: permissions
 ALTER TABLE "permissions"

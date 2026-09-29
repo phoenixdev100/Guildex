@@ -1,7 +1,7 @@
 /**
  * Context Command
  *
- * Analyze a piece of text — meaning, tone, sentiment, key points.
+ * Analyze a piece of text - meaning, tone, sentiment, key points.
  */
 
 import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';

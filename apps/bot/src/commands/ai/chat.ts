@@ -1,5 +1,5 @@
 /**
- * AI Command — chat / summarize / translate / explain
+ * AI Command - chat / summarize / translate / explain
  *
  * Free AI backend via Pollinations (no API key needed).
  * Memory + personality feed into /ai chat.

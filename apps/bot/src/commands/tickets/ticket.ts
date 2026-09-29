@@ -61,7 +61,7 @@ export const ticket: Command = {
 
                 await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-                // Create the ticket channel (bot-side — the API can't create channels)
+                // Create the ticket channel (bot-side - the API can't create channels)
                 let category = interaction.guild.channels.cache.find(
                     c => c.type === ChannelType.GuildCategory && c.name.toLowerCase() === 'tickets'
                 );

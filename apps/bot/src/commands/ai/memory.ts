@@ -1,7 +1,7 @@
 /**
  * Memory Command
  *
- * Per-user AI memory for /ai chat — remembers your conversation
+ * Per-user AI memory for /ai chat - remembers your conversation
  * so follow-ups have context. In-memory (resets on bot restart).
  */
 
@@ -29,19 +29,19 @@ export const memory: Command = {
             if (sub === 'enable') {
                 getMemory(userId).enabled = true;
                 await interaction.reply({
-                    content: '🧠 **AI memory enabled** — `/ai chat` will now remember your conversation (last 10 messages). Use `/memory clear` anytime to wipe it.',
+                    content: '🧠 **AI memory enabled** - `/ai chat` will now remember your conversation (last 10 messages). Use `/memory clear` anytime to wipe it.',
                     flags: MessageFlags.Ephemeral,
                 });
             } else if (sub === 'disable') {
                 getMemory(userId).enabled = false;
                 await interaction.reply({
-                    content: '🧠 **AI memory disabled** — each `/ai chat` is now a fresh conversation.',
+                    content: '🧠 **AI memory disabled** - each `/ai chat` is now a fresh conversation.',
                     flags: MessageFlags.Ephemeral,
                 });
             } else if (sub === 'clear') {
                 clearMemory(userId);
                 await interaction.reply({
-                    content: '🧹 **Memory cleared** — your AI conversation history is gone.',
+                    content: '🧹 **Memory cleared** - your AI conversation history is gone.',
                     flags: MessageFlags.Ephemeral,
                 });
             } else {

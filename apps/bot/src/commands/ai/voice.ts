@@ -1,7 +1,7 @@
 /**
  * Voice Command
  *
- * AI text-to-speech — turns text into an audio message.
+ * AI text-to-speech - turns text into an audio message.
  * (Bots can't capture voice input, so this generates speech instead.)
  */
 

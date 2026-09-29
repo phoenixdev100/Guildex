@@ -59,7 +59,7 @@ export function startReminderPoller(client: BotClient): void {
         try {
             await pollReminders(client);
         } catch (error) {
-            // API down or other failure — try again next tick
+            // API down or other failure - try again next tick
             logger.debug({ error }, 'Reminder poll failed');
         }
     };

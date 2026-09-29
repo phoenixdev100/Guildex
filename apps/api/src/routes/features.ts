@@ -1,7 +1,7 @@
 /**
  * Guild Feature Routes
  *
- * Autoroles, reaction roles and tickets — the bot-facing endpoints
+ * Autoroles, reaction roles and tickets - the bot-facing endpoints
  * backing the corresponding slash commands and event handlers.
  */
 
@@ -338,7 +338,7 @@ export async function featureRoutes(app: FastifyInstance) {
     // AFK STATUS
     // ============================================================================
 
-    // Set AFK status (upsert — resets the timestamp if already AFK)
+    // Set AFK status (upsert - resets the timestamp if already AFK)
     app.put('/guilds/:guildId/afk/:userId', async (request, reply) => {
         const { guildId, userId } = request.params as { guildId: string; userId: string };
         const { reason } = afkSchema.parse(request.body);

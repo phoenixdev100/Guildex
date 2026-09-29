@@ -1,7 +1,7 @@
 /**
  * Heatmap Command
  *
- * Activity heatmap — messages grouped by day of week,
+ * Activity heatmap - messages grouped by day of week,
  * rendered as an intensity map. Helps spot peak activity days.
  */
 
@@ -23,7 +23,7 @@ function intensityCell(value: number, max: number): string {
 export const heatmap: Command = {
     data: new SlashCommandBuilder()
         .setName('heatmap')
-        .setDescription('Activity heatmap — busiest days of the week')
+        .setDescription('Activity heatmap - busiest days of the week')
         .setDMPermission(false)
         .addIntegerOption(o =>
             o.setName('days').setDescription('Days of history (7-90, default 30)').setMinValue(7).setMaxValue(90)),
@@ -42,7 +42,7 @@ export const heatmap: Command = {
             const daily = res.data.daily ?? [];
 
             if (!daily.length) {
-                await interaction.editReply('🗺️ No activity data yet — the heatmap fills in as the bot tracks messages.');
+                await interaction.editReply('🗺️ No activity data yet - the heatmap fills in as the bot tracks messages.');
                 return;
             }
 
@@ -62,7 +62,7 @@ export const heatmap: Command = {
 
             const embed = new EmbedBuilder()
                 .setColor('#FF6B35')
-                .setTitle(`�️ Activity Heatmap — ${interaction.guild.name}`)
+                .setTitle(`�️ Activity Heatmap - ${interaction.guild.name}`)
                 .setDescription(grid)
                 .addFields(
                     { name: '🔥 Busiest day', value: WEEKDAYS[busiest], inline: true },
@@ -74,7 +74,7 @@ export const heatmap: Command = {
             await interaction.editReply({ embeds: [embed] });
         } catch (error: any) {
             console.error('heatmap command error:', error);
-            const msg = '❌ Could not load analytics — the API may be unreachable.';
+            const msg = '❌ Could not load analytics - the API may be unreachable.';
             if (interaction.deferred || interaction.replied) await interaction.editReply(msg).catch(() => {});
             else await interaction.reply({ content: msg, flags: MessageFlags.Ephemeral }).catch(() => {});
         }

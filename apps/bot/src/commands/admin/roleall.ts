@@ -40,7 +40,7 @@ export const roleall: Command = {
 
         const me = interaction.guild.members.me ?? await interaction.guild.members.fetchMe();
         if (role.position >= me.roles.highest.position) {
-            await interaction.reply({ content: '❌ That role is at or above my highest role — I cannot manage it.', flags: MessageFlags.Ephemeral });
+            await interaction.reply({ content: '❌ That role is at or above my highest role - I cannot manage it.', flags: MessageFlags.Ephemeral });
             return;
         }
 

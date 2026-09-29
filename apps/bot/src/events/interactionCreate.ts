@@ -75,7 +75,7 @@ export async function handleInteractionCreate(
 
                 if (!hasAdminRole) {
                     await interaction.reply({
-                        content: '❌ You need the required permission — or the server\'s configured admin role — to use this command.',
+                        content: '❌ You need the required permission - or the server\'s configured admin role - to use this command.',
                         ephemeral: true,
                     });
                     return;

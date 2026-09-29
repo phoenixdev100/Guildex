@@ -14,7 +14,7 @@ export async function handleReady(client: BotClient): Promise<void> {
     logger.info(`✅ Bot logged in as ${client.user?.tag}`);
     logger.info(`📊 Serving ${client.guilds.cache.size} guilds`);
 
-    // Deploy commands to all guilds — but only when definitions changed
+    // Deploy commands to all guilds - but only when definitions changed
     // (tsx watch restarts on every file save; Discord rate-limits guild
     // command deploys to ~200/day, so blind redeploys are risky)
     const shouldDeploy =
@@ -42,7 +42,7 @@ export async function handleReady(client: BotClient): Promise<void> {
             logger.info('✅ Commands deployed successfully');
         }
     } else {
-        logger.info('⏭️  Commands unchanged — skipping deploy');
+        logger.info('⏭️  Commands unchanged - skipping deploy');
     }
 
     // Check API connectivity

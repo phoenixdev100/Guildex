@@ -91,14 +91,14 @@ export const appsetup: Command = {
                     const forms = await fetchForms(guildId);
                     const embed = new EmbedBuilder()
                         .setColor('#5865F2')
-                        .setTitle(`📝 Application Forms — ${interaction.guild.name}`)
+                        .setTitle(`📝 Application Forms - ${interaction.guild.name}`)
                         .setDescription(forms.length
                             ? forms.map(f =>
-                                `${f.isOpen ? '🟢' : '🔴'} **${f.name}** — ${f.questions.length}q • ${(f as any)._count?.submissions ?? 0} pending` +
+                                `${f.isOpen ? '🟢' : '🔴'} **${f.name}** - ${f.questions.length}q • ${(f as any)._count?.submissions ?? 0} pending` +
                                 `${f.logChannelId ? `\n   ↳ reviews → <#${f.logChannelId}>` : ''}` +
                                 `${f.acceptedRoleId ? ` • accept → <@&${f.acceptedRoleId}>` : ''}`
                             ).join('\n')
-                            : 'No forms yet — create one with `/appsetup create`.');
+                            : 'No forms yet - create one with `/appsetup create`.');
                     await interaction.editReply({ embeds: [embed] });
                     return;
                 }
@@ -125,12 +125,12 @@ export const appsetup: Command = {
                     const form = await needForm(); if (!form) return;
                     const embed = new EmbedBuilder()
                         .setColor('#5865F2')
-                        .setTitle(`❓ ${form.name} — Questions (${form.questions.length})`)
+                        .setTitle(`❓ ${form.name} - Questions (${form.questions.length})`)
                         .setDescription(form.questions.length
                             ? form.questions.map((q, i) =>
                                 `**${i + 1}.** ${q.label}\n   ↳ ${q.style ?? 'short'}${q.required === false ? ' • optional' : ''} • page ${Math.floor(i / 5) + 1}`
                             ).join('\n')
-                            : 'No questions yet — add with `/appsetup addquestion`.');
+                            : 'No questions yet - add with `/appsetup addquestion`.');
                     await interaction.editReply({ embeds: [embed] });
                     return;
                 }

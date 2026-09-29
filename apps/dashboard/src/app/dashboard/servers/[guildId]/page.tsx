@@ -93,7 +93,7 @@ export default function GuildDetailPage() {
                 body: JSON.stringify({ roleId: adminRoleId || null }),
             });
             if (res.ok) {
-                setMessage({ type: 'ok', text: '✅ Admin role saved — takes effect within ~60 seconds.' });
+                setMessage({ type: 'ok', text: '✅ Admin role saved - takes effect within ~60 seconds.' });
             } else {
                 const err = await res.json().catch(() => ({}));
                 setMessage({ type: 'err', text: `❌ ${err.error ?? 'Failed to save'}` });
@@ -160,7 +160,7 @@ export default function GuildDetailPage() {
                 <h2 className="text-xl font-bold text-foreground mb-1">🛡️ Bot Admin Role</h2>
                 <p className="text-sm text-muted-foreground mb-6">
                     Members with this role can use <strong>admin commands</strong> (/announce, /purge, /roleall, /audit, …)
-                    even without raw Discord permissions. Enforced by the bot — takes effect within ~60 seconds.
+                    even without raw Discord permissions. Enforced by the bot - takes effect within ~60 seconds.
                 </p>
 
                 <label className="block text-sm font-medium text-foreground mb-2">Admin role</label>
@@ -170,7 +170,7 @@ export default function GuildDetailPage() {
                         onChange={(e) => setAdminRoleId(e.target.value)}
                         className="flex-1 bg-secondary/50 border border-border rounded-lg px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                     >
-                        <option value="">— No admin role (Discord permissions only) —</option>
+                        <option value="">- No admin role (Discord permissions only) -</option>
                         {roles.map((r) => (
                             <option key={r.id} value={r.id} disabled={r.managed}>
                                 {r.name}{r.managed ? ' (managed)' : ''}
@@ -201,7 +201,7 @@ export default function GuildDetailPage() {
                 <div>
                     <h2 className="text-xl font-bold text-foreground mb-1">📝 Applications</h2>
                     <p className="text-sm text-muted-foreground">
-                        Build application forms, manage questions, review submissions — powers <code className="bg-secondary px-1 rounded">/apply</code>.
+                        Build application forms, manage questions, review submissions - powers <code className="bg-secondary px-1 rounded">/apply</code>.
                     </p>
                 </div>
                 <span className="text-2xl text-muted-foreground group-hover:text-primary transition-colors">→</span>
@@ -211,7 +211,7 @@ export default function GuildDetailPage() {
             <div className="glass rounded-xl p-6 border border-border/50">
                 <h2 className="text-xl font-bold text-foreground mb-1">🧩 Modules</h2>
                 <p className="text-sm text-muted-foreground mb-6">
-                    Toggle feature categories for this server — disabled modules block their commands instantly.
+                    Toggle feature categories for this server - disabled modules block their commands instantly.
                 </p>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {modules.map(m => (
@@ -230,7 +230,7 @@ export default function GuildDetailPage() {
                         </div>
                     ))}
                     {modules.length === 0 && (
-                        <p className="text-sm text-muted-foreground col-span-full">No modules registered — invite the bot to this server first.</p>
+                        <p className="text-sm text-muted-foreground col-span-full">No modules registered - invite the bot to this server first.</p>
                     )}
                 </div>
             </div>

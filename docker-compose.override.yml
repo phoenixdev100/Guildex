@@ -1,9 +1,9 @@
-# Dev overrides — merged automatically by `docker compose up`.
+# Dev overrides - merged automatically by `docker compose up`.
 # Pure prod: docker compose -f docker-compose.yml up -d --build
 #
 # Each app switches to its Dockerfile's `dev` target (tsx watch / next dev)
 # and the repo is bind-mounted over /app so edits trigger reloads.
-# Anonymous volumes preserve the image's Linux node_modules — the bind
+# Anonymous volumes preserve the image's Linux node_modules - the bind
 # mount would otherwise hide them behind the host's Windows copies.
 #
 # Windows: file watching across bind mounts needs polling, hence

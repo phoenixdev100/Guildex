@@ -41,7 +41,7 @@ export const nickname: Command = {
 
             const me = interaction.guild.members.me ?? await interaction.guild.members.fetchMe();
             if (member.roles.highest.position >= me.roles.highest.position) {
-                await interaction.reply({ content: '❌ I cannot change this member\'s nickname — their role is at or above mine.', flags: MessageFlags.Ephemeral });
+                await interaction.reply({ content: '❌ I cannot change this member\'s nickname - their role is at or above mine.', flags: MessageFlags.Ephemeral });
                 return;
             }
 

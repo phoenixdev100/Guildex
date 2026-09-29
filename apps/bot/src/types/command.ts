@@ -29,7 +29,7 @@ export interface Command {
     permissions?: string[]; // Required permissions
     /**
      * Discord permission bitfield required to run this command.
-     * Enforced manually in interactionCreate — members holding the
+     * Enforced manually in interactionCreate - members holding the
      * guild's dashboard-assigned admin role also pass. (Cannot use
      * setDefaultMemberPermissions, since Discord-side gating would
      * block admin-role members from ever invoking the command.)

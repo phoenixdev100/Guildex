@@ -1,12 +1,12 @@
 /**
  * AI Service
  *
- * Free-tier AI backend via Pollinations.ai — no API key required.
+ * Free-tier AI backend via Pollinations.ai - no API key required.
  * - Text:  POST https://text.pollinations.ai/  (chat completions)
  * - Image: GET  https://image.pollinations.ai/prompt/{prompt}
  * - TTS:   GET  https://text.pollinations.ai/{prompt}?model=openai-audio
  *
- * If OPENAI_API_KEY is ever configured, swap callText() to OpenAI —
+ * If OPENAI_API_KEY is ever configured, swap callText() to OpenAI -
  * the command layer doesn't change.
  */
 
@@ -18,7 +18,7 @@ export interface ChatMessage {
 const TEXT_API = 'https://text.pollinations.ai/';
 const REQUEST_TIMEOUT_MS = 45_000;
 
-/** Discord can't render markdown tables or HTML — force Discord-safe output. */
+/** Discord can't render markdown tables or HTML - force Discord-safe output. */
 const DISCORD_FORMAT = 'Format your reply for Discord: use **bold**, *italics*, bullet points (-), and short paragraphs. NEVER use markdown tables, HTML tags like <br>, or code blocks unless asked.';
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
@@ -33,7 +33,7 @@ function stripAds(text: string): string {
         .trim();
 }
 
-/** Chat completion — returns the assistant's reply text. Retries transient failures. */
+/** Chat completion - returns the assistant's reply text. Retries transient failures. */
 export async function aiChat(messages: ChatMessage[], model = 'openai'): Promise<string> {
     const formatted = messages.map(m =>
         m.role === 'system' ? { ...m, content: `${m.content}\n\n${DISCORD_FORMAT}` } : m
@@ -64,7 +64,7 @@ export async function aiChat(messages: ChatMessage[], model = 'openai'): Promise
         }
     }
 
-    // Fallback: simpler GET endpoint — concatenates system+user into one prompt
+    // Fallback: simpler GET endpoint - concatenates system+user into one prompt
     try {
         const system = formatted.filter(m => m.role === 'system').map(m => m.content).join(' ');
         const user = formatted.filter(m => m.role === 'user').map(m => m.content).join('\n');
@@ -80,7 +80,7 @@ export async function aiChat(messages: ChatMessage[], model = 'openai'): Promise
         // fall through to final error
     }
 
-    throw new Error(`AI is busy right now — try again in a moment`);
+    throw new Error(`AI is busy right now - try again in a moment`);
 }
 
 
@@ -106,7 +106,7 @@ export function aiImageUrl(prompt: string): string {
 }
 
 /**
- * Download a generated image as a Buffer — generation takes 5–30s, so
+ * Download a generated image as a Buffer - generation takes 5–30s, so
  * we fetch server-side and upload as a Discord attachment instead of
  * embedding the URL (Discord's proxy times out on slow generation).
  */
@@ -127,7 +127,7 @@ export async function aiImage(prompt: string): Promise<Buffer> {
             clearTimeout(timer);
         }
     }
-    throw new Error('Image generation is busy — try again in a moment');
+    throw new Error('Image generation is busy - try again in a moment');
 }
 
 /** Text-to-speech audio (MP3 buffer). `lang` is a language code (en, hi, es, ...). */

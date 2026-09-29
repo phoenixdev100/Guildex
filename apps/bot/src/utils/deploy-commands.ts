@@ -43,7 +43,7 @@ export function saveCommandsHash(client: BotClient): void {
     }
 }
 
-/** Implemented commands first, then stubs — then category priority. */
+/** Implemented commands first, then stubs - then category priority. */
 function sortCommandsForDeploy(client: BotClient) {
     const allCommands = Array.from(client.commands.values());
 
@@ -106,7 +106,7 @@ export async function deployGuildCommands(
 ): Promise<void> {
     const rest = new REST({ version: '10' }).setToken(env.DISCORD_BOT_TOKEN);
 
-    // Implemented commands always deploy before stubs — see
+    // Implemented commands always deploy before stubs - see
     // sortCommandsForDeploy for the shared ordering.
     const allCommands = Array.from(client.commands.values());
     const sortedCommands = sortCommandsForDeploy(client);

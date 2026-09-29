@@ -42,7 +42,7 @@ Thumbs.db
 *.db-journal
 
 # Docker
-# docker-compose.override.yml is intentionally tracked — it holds the
+# docker-compose.override.yml is intentionally tracked - it holds the
 # shared dev-mode setup (watch targets + bind mounts), no secrets.
 docker-compose.prod.yml
 

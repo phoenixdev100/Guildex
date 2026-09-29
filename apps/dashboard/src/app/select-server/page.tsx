@@ -1,7 +1,7 @@
 /**
  * Server Selection Screen
  *
- * Standalone page shown right after Discord OAuth — pick which server
+ * Standalone page shown right after Discord OAuth - pick which server
  * to manage before entering the dashboard. Only shows servers where
  * the user is owner/admin (scoped server-side via their OAuth token).
  */
@@ -97,7 +97,7 @@ export default function SelectServerPage() {
                 />
             )}
 
-            {/* Admin Panel entry — bot owner only */}
+            {/* Admin Panel entry - bot owner only */}
             {isSuperAdmin && (
                 <Link
                     href="/admin"
@@ -150,10 +150,10 @@ export default function SelectServerPage() {
                     <h2 className="text-lg font-bold text-foreground">No manageable servers</h2>
                     <p className="text-sm text-muted-foreground mt-2">
                         {error
-                            ? 'Couldn\'t reach Discord to verify your servers — your session may be stale.'
+                            ? 'Couldn\'t reach Discord to verify your servers - your session may be stale.'
                             : search
                                 ? 'No servers match your search.'
-                                : 'The bot isn\'t in any server you manage yet — invite it first.'}
+                                : 'The bot isn\'t in any server you manage yet - invite it first.'}
                     </p>
                     <div className="flex gap-3 justify-center mt-5">
                         <button

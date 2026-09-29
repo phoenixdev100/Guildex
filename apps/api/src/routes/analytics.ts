@@ -157,7 +157,7 @@ export async function analyticsRoutes(app: FastifyInstance) {
         }
     );
 
-    /** Leaderboard — top members by messages. */
+    /** Leaderboard - top members by messages. */
     app.get<{ Params: { guildId: string } }>('/guilds/:guildId/analytics/leaderboard', async (req) => {
         const rows = await prisma.userStat.findMany({
             where: { guildId: req.params.guildId },

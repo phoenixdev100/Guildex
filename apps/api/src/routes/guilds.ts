@@ -243,7 +243,7 @@ export async function guildRoutes(app: FastifyInstance): Promise<void> {
 
     /**
      * PUT /api/guilds/:guildId/admin-role
-     * Assign the bot-admin role — members holding it may use admin commands
+     * Assign the bot-admin role - members holding it may use admin commands
      * (synced into Discord's command permissions by the bot).
      */
     app.put('/:guildId/admin-role', async (request, reply) => {

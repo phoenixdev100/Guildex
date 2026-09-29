@@ -36,4 +36,4 @@ for (const port of PORTS) {
     }
 }
 
-console.log(killed === 0 ? 'ℹ️  No dev servers were running' : `Done — freed ${killed} process(es)`);
+console.log(killed === 0 ? 'ℹ️  No dev servers were running' : `Done - freed ${killed} process(es)`);
