@@ -10,7 +10,7 @@ import './landing.css';
 import { Nav } from '@/components/landing/nav';
 import { Hero } from '@/components/landing/hero';
 import { Features, Modules, Stats } from '@/components/landing/features';
-import { Showcase, Steps } from '@/components/landing/showcase';
+import { Showcase } from '@/components/landing/showcase';
 import { Faq, Testimonials } from '@/components/landing/social';
 import { Cta, Footer } from '@/components/landing/closing';
 
@@ -30,7 +30,6 @@ export default function LandingPage() {
             <Features />
             <Modules />
             <Showcase />
-            <Steps />
             <Testimonials />
             <Faq />
             <Cta />

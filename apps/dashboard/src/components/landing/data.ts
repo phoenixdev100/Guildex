@@ -76,32 +76,10 @@ export const SIDEBAR: [string, LucideIcon][] = [
 ];
 
 export const TICKS: string[] = [
-    'Enable or disable modules per server - no redeploys',
-    'Moderation cases, audit logs and guild analytics',
-    'Ticket panels, applications and custom commands',
-    'Persistent data in PostgreSQL, cached through Redis',
-    'Discord OAuth login with per-guild authorization',
-];
-
-export const STEPS: { title: string; desc: string; code?: string }[] = [
-    {
-        title: 'Clone & configure',
-        desc: 'Pull the monorepo and set your Discord credentials in one env file.',
-        code: 'git clone … && pnpm install',
-    },
-    {
-        title: 'Deploy the stack',
-        desc: 'Bot, API, dashboard, PostgreSQL and Redis start together.',
-        code: 'docker compose up -d',
-    },
-    {
-        title: 'Sign in with Discord',
-        desc: 'OAuth login picks the servers you administer.',
-    },
-    {
-        title: 'Enable modules',
-        desc: 'Flip features on per guild and manage everything from the UI.',
-    },
+    'Toggle modules per server - no redeploys',
+    'Moderation cases, audit logs & analytics',
+    'Tickets, applications & custom commands',
+    'Discord OAuth with per-guild access control',
 ];
 
 export const TESTIMONIALS: { quote: string; name: string; role: string; initials: string }[] = [

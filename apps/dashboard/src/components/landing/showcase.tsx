@@ -6,31 +6,25 @@ import {
     ChevronDown,
     Database,
     Gift,
-    Heart,
     Lock,
     Search,
     Shield,
-    Sparkles,
     Ticket,
     Trophy,
-    Users,
 } from 'lucide-react';
-import { SIDEBAR, STEPS, TICKS } from './data';
+import { SIDEBAR, TICKS } from './data';
 
 const PANEL_MODULES: [string, string, typeof Shield, boolean][] = [
     ['Moderation', 'Cases & automod', Shield, true],
     ['Leveling', 'XP & ranks', Trophy, true],
     ['Economy', 'Currency & shop', Database, true],
     ['Tickets', 'Support panels', Ticket, true],
-    ['Welcome', 'Greet new members', Users, false],
-    ['Reaction Roles', 'Self-assign roles', Heart, false],
-    ['Giveaways', 'Community events', Gift, true],
-    ['AI Commands', 'Chat, image & TTS', Sparkles, false],
+    ['Giveaways', 'Community events', Gift, false],
 ];
 
 export function Showcase() {
     return (
-        <section className="section" id="dashboard">
+        <section className="section" id="dashboard" style={{ paddingTop: 'clamp(40px, 5vw, 64px)' }}>
             <div className="wrap split">
                 <div>
                     <div className="kicker">Web dashboard</div>
@@ -100,30 +94,3 @@ function ModulesPanel() {
     );
 }
 
-export function Steps() {
-    return (
-        <section className="section" id="get-started">
-            <div className="wrap">
-                <div className="secHead center">
-                    <div className="kicker">Setup</div>
-                    <h2>Running in minutes, not days.</h2>
-                    <p className="secSub">
-                        Clone, configure, deploy - the whole stack comes up with one
-                        compose command.
-                    </p>
-                </div>
-
-                <div className="stepGrid">
-                    {STEPS.map((s, i) => (
-                        <div className="step" key={s.title}>
-                            <div className="stepNum">{i + 1}</div>
-                            <h3>{s.title}</h3>
-                            <p>{s.desc}</p>
-                            {s.code && <code className="stepCode">{s.code}</code>}
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
-}
