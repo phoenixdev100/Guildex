@@ -1,7 +1,7 @@
 /**
  * Audit Command
  *
- * View recent audit-log entries — who did what in the server.
+ * View recent audit-log entries - who did what in the server.
  */
 
 import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, MessageFlags, AuditLogEvent } from 'discord.js';
@@ -71,7 +71,7 @@ export const audit: Command = {
                 const executor = e.executor?.tag ?? 'Unknown';
                 const target = (e.target as any)?.tag ?? (e.target as any)?.name ?? e.targetId ?? 'N/A';
                 const when = `<t:${Math.floor(e.createdTimestamp / 1000)}:R>`;
-                return `**${action}** — ${executor} → ${target} • ${when}`;
+                return `**${action}** - ${executor} → ${target} • ${when}`;
             });
 
             const embed = new EmbedBuilder()

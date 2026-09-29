@@ -89,7 +89,7 @@ async function main(): Promise<BotClient> {
     }
 }
 
-// Graceful shutdown — bounded: force-exits after 3s so Ctrl+C
+// Graceful shutdown - bounded: force-exits after 3s so Ctrl+C
 // never leaves a hung terminal.
 async function shutdown(signal: string, client?: BotClient) {
     logger.info(`${signal} received, shutting down...`);

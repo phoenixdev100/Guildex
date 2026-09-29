@@ -57,8 +57,8 @@ export const analytics: Command = {
         .setName('analytics')
         .setDescription('Server analytics')
         .setDMPermission(false)
-        .addSubcommand(s => s.setName('server').setDescription('Server overview — members, channels, activity'))
-        .addSubcommand(s => s.setName('growth').setDescription('Member growth — joins vs leaves over 14 days'))
+        .addSubcommand(s => s.setName('server').setDescription('Server overview - members, channels, activity'))
+        .addSubcommand(s => s.setName('growth').setDescription('Member growth - joins vs leaves over 14 days'))
         .addSubcommand(s => s.setName('engagement').setDescription('Message & command activity over 14 days'))
         .addSubcommand(s =>
             s.setName('user').setDescription('Activity stats for a member')
@@ -89,7 +89,7 @@ export const analytics: Command = {
 
                     const embed = new EmbedBuilder()
                         .setColor('#5865F2')
-                        .setTitle(`📊 ${guild.name} — Overview`)
+                        .setTitle(`📊 ${guild.name} - Overview`)
                         .setThumbnail(guild.iconURL())
                         .addFields(
                             { name: '👥 Members', value: `${guild.memberCount.toLocaleString()}`, inline: true },
@@ -111,7 +111,7 @@ export const analytics: Command = {
                             { name: '\u200b', value: '\u200b', inline: true },
                         );
                     } else {
-                        embed.setFooter({ text: 'Analytics tracking just started — trends appear as data accumulates' });
+                        embed.setFooter({ text: 'Analytics tracking just started - trends appear as data accumulates' });
                     }
 
                     await interaction.editReply({ embeds: [embed] });
@@ -121,7 +121,7 @@ export const analytics: Command = {
                 case 'growth': {
                     const data = await fetchAnalytics(guildId, 14);
                     if (!data || data.daily.length === 0) {
-                        await interaction.editReply('📈 No analytics data yet — tracking starts collecting once the bot is online. Check back tomorrow.');
+                        await interaction.editReply('📈 No analytics data yet - tracking starts collecting once the bot is online. Check back tomorrow.');
                         break;
                     }
                     const joins = data.daily.map(d => d.joins);
@@ -133,7 +133,7 @@ export const analytics: Command = {
 
                     const embed = new EmbedBuilder()
                         .setColor('#57F287')
-                        .setTitle(`📈 Member Growth — ${interaction.guild.name}`)
+                        .setTitle(`📈 Member Growth - ${interaction.guild.name}`)
                         .setDescription(
                             `**Joins (14d):** ${sum(data.daily, 'joins')}  •  **Leaves:** ${sum(data.daily, 'leaves')}  •  **Net:** ${net >= 0 ? '+' : ''}${net}\n` +
                             `**Retention:** ${retention}%\n\n` +
@@ -143,7 +143,7 @@ export const analytics: Command = {
                         .addFields({
                             name: 'Busiest join days',
                             value: data.daily.filter(d => d.joins > 0).sort((a, b) => b.joins - a.joins).slice(0, 3)
-                                .map(d => `• ${fmtDate(d.date)} — ${d.joins} joined`).join('\n') || 'No joins tracked yet',
+                                .map(d => `• ${fmtDate(d.date)} - ${d.joins} joined`).join('\n') || 'No joins tracked yet',
                         });
 
                     await interaction.editReply({ embeds: [embed] });
@@ -153,7 +153,7 @@ export const analytics: Command = {
                 case 'engagement': {
                     const data = await fetchAnalytics(guildId, 14);
                     if (!data || data.daily.length === 0) {
-                        await interaction.editReply('💬 No activity data yet — check back after the bot has tracked some messages.');
+                        await interaction.editReply('💬 No activity data yet - check back after the bot has tracked some messages.');
                         break;
                     }
                     const msgs = data.daily.map(d => d.messages);
@@ -163,12 +163,12 @@ export const analytics: Command = {
                     let topChannels = '';
                     try {
                         const res = await apiClient.get<{ data: { channels: ChannelRow[] } }>(`/guilds/${guildId}/analytics/channels`);
-                        topChannels = res.data.channels.slice(0, 3).map((c, i) => `${['🥇', '🥈', '🥉'][i]} <#${c.channelId}> — ${c.messages} msgs`).join('\n');
+                        topChannels = res.data.channels.slice(0, 3).map((c, i) => `${['🥇', '🥈', '🥉'][i]} <#${c.channelId}> - ${c.messages} msgs`).join('\n');
                     } catch { /* ignore */ }
 
                     const embed = new EmbedBuilder()
                         .setColor('#FEE75C')
-                        .setTitle(`💬 Engagement — ${interaction.guild.name}`)
+                        .setTitle(`💬 Engagement - ${interaction.guild.name}`)
                         .setDescription(
                             `**Messages (14d):** ${sum(data.daily, 'messages')}  •  **Avg/day:** ${avgMsg}\n` +
                             `**Commands run:** ${sum(data.daily, 'commands')}\n\n` +
@@ -191,7 +191,7 @@ export const analytics: Command = {
                         const s = res.data;
                         const embed = new EmbedBuilder()
                             .setColor('#EB459E')
-                            .setTitle(`👤 ${target.username} — Activity`)
+                            .setTitle(`👤 ${target.username} - Activity`)
                             .setThumbnail(target.displayAvatarURL())
                             .addFields(
                                 { name: '💬 Messages', value: `${s.messages}`, inline: true },
@@ -214,7 +214,7 @@ export const analytics: Command = {
                     const max = rows[0].messages;
                     const embed = new EmbedBuilder()
                         .setColor('#5865F2')
-                        .setTitle(`📺 Most Active Channels — ${interaction.guild.name}`)
+                        .setTitle(`📺 Most Active Channels - ${interaction.guild.name}`)
                         .setDescription(rows.map((c, i) =>
                             `**${i + 1}.** <#${c.channelId}>\n${bar(c.messages, max)} ${c.messages} messages`
                         ).join('\n'));
@@ -229,7 +229,7 @@ export const analytics: Command = {
                     const max = rows[0].count;
                     const embed = new EmbedBuilder()
                         .setColor('#5865F2')
-                        .setTitle(`⚡ Most Used Commands — ${interaction.guild.name}`)
+                        .setTitle(`⚡ Most Used Commands - ${interaction.guild.name}`)
                         .setDescription(rows.map((c, i) =>
                             `**${i + 1}.** /${c.command}\n${bar(c.count, max)} ${c.count} uses`
                         ).join('\n'));
@@ -244,7 +244,7 @@ export const analytics: Command = {
                     const max = rows[0].messages;
                     const embed = new EmbedBuilder()
                         .setColor('#FFD700')
-                        .setTitle(`🏆 Activity Leaderboard — ${interaction.guild.name}`)
+                        .setTitle(`🏆 Activity Leaderboard - ${interaction.guild.name}`)
                         .setDescription(rows.map((u, i) =>
                             `${['🥇', '🥈', '🥉'][i] ?? `**${i + 1}.**`} <@${u.userId}>\n${bar(u.messages, max)} ${u.messages} msgs • ${u.commands} cmds`
                         ).join('\n'))
@@ -258,7 +258,7 @@ export const analytics: Command = {
             }
         } catch (error: any) {
             console.error('analytics command error:', error);
-            const msg = '❌ Could not load analytics — the API may be unreachable.';
+            const msg = '❌ Could not load analytics - the API may be unreachable.';
             if (interaction.deferred || interaction.replied) await interaction.editReply(msg).catch(() => {});
             else await interaction.reply({ content: msg, flags: MessageFlags.Ephemeral }).catch(() => {});
         }

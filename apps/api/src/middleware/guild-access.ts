@@ -3,7 +3,7 @@
  *
  * Determines which guilds the calling user is allowed to manage.
  * The dashboard's Next.js middleware forwards the user's Discord OAuth
- * token (`x-discord-token`) — we ask Discord which guilds that user
+ * token (`x-discord-token`) - we ask Discord which guilds that user
  * owns or has ADMINISTRATOR / MANAGE_GUILD in, then scope data to
  * those guilds.
  *
@@ -45,13 +45,13 @@ async function fetchManageableGuilds(token: string): Promise<Set<string>> {
             headers: { Authorization: `Bearer ${token}` },
         });
     } catch (err) {
-        // Network failure — don't cache, let the next request retry
+        // Network failure - don't cache, let the next request retry
         console.error('[guild-access] Discord /users/@me/guilds request failed:', err);
         return new Set();
     }
 
     if (!res.ok) {
-        // Invalid/expired token or transient Discord error — don't cache
+        // Invalid/expired token or transient Discord error - don't cache
         // failures; a cached empty set would lock the user out for 5 min.
         const body = await res.text().catch(() => '');
         console.error(`[guild-access] Discord /users/@me/guilds → ${res.status}: ${body.slice(0, 200)}`);
@@ -87,7 +87,7 @@ export async function getAllowedGuildIds(request: FastifyRequest): Promise<Set<s
     }
 
     if (!discordToken) {
-        // Bot / service traffic — trusted via internal API key
+        // Bot / service traffic - trusted via internal API key
         return request.isInternal ? null : new Set();
     }
 

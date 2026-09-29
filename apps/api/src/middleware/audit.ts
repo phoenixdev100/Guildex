@@ -59,7 +59,7 @@ function extractResource(path: string): string {
  * Audit logging middleware.
  *
  * Registered on the `onResponse` hook so it runs after authentication
- * and the route handler — request.user and the final status code are
+ * and the route handler - request.user and the final status code are
  * both available at that point.
  */
 export async function auditLog(

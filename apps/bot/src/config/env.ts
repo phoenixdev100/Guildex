@@ -22,9 +22,9 @@ const envSchema = z.object({
     LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
 
     // Command deployment strategy on boot:
-    // 'changed' — deploy only when command definitions differ (default)
-    // 'always'  — deploy on every boot
-    // 'never'   — never auto-deploy
+    // 'changed' - deploy only when command definitions differ (default)
+    // 'always'  - deploy on every boot
+    // 'never'   - never auto-deploy
     DEPLOY_COMMANDS: z.enum(['always', 'changed', 'never']).default('changed'),
 });
 

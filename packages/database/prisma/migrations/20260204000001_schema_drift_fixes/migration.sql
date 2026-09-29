@@ -1,17 +1,17 @@
 -- Migration: reconcile live database drift with schema.prisma
 -- Generated via `prisma migrate diff` against the live database.
 
--- AlterTable: economy_data — add streak/work tracking columns
+-- AlterTable: economy_data - add streak/work tracking columns
 ALTER TABLE "economy_data"
     ADD COLUMN "dailyStreak" INTEGER NOT NULL DEFAULT 0,
     ADD COLUMN "lastWork" TIMESTAMP(3);
 
--- AlterTable: permissions — drop temp defaults added by previous migration
+-- AlterTable: permissions - drop temp defaults added by previous migration
 ALTER TABLE "permissions"
     ALTER COLUMN "guildId" DROP DEFAULT,
     ALTER COLUMN "userId" DROP DEFAULT;
 
--- AlterTable: warnings — issuedBy renamed to moderatorId (data preserved)
+-- AlterTable: warnings - issuedBy renamed to moderatorId (data preserved)
 ALTER TABLE "warnings" ADD COLUMN "moderatorId" TEXT NOT NULL DEFAULT '';
 UPDATE "warnings" SET "moderatorId" = "issuedBy";
 ALTER TABLE "warnings" DROP COLUMN "issuedBy";

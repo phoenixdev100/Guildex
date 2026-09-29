@@ -1,7 +1,7 @@
 /**
  * Dashboard Middleware
  *
- * 1. Requires a valid NextAuth session for all backend-proxy routes —
+ * 1. Requires a valid NextAuth session for all backend-proxy routes -
  *    unauthenticated requests get 401 instead of silently passing
  *    the internal API key through.
  * 2. Injects the internal API key plus the user's Discord identity

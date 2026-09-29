@@ -32,7 +32,7 @@ export const toxicity: Command = {
             const embed = new EmbedBuilder()
                 .setColor(score >= 70 ? 0xed4245 : score >= 40 ? 0xfee75c : 0x57f287)
                 .setTitle('🧪 Toxicity Score')
-                .setDescription(`**${score}/100** — ${label}\n\`${meter}\``)
+                .setDescription(`**${score}/100** - ${label}\n\`${meter}\``)
                 .addFields({ name: 'Text', value: `> ${text.slice(0, 500)}` })
                 .setFooter({ text: `Requested by ${interaction.user.tag}` })
                 .setTimestamp();

@@ -1,7 +1,7 @@
 /**
  * AIModerate Command
  *
- * AI-powered moderation check — is this text safe to post?
+ * AI-powered moderation check - is this text safe to post?
  */
 
 import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';

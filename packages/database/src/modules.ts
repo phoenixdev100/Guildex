@@ -2,7 +2,7 @@
  * Module Definitions
  *
  * Canonical list of feature modules. Each module name maps to a bot
- * command category — the interaction handler checks whether a command's
+ * command category - the interaction handler checks whether a command's
  * category module is enabled for the guild before executing it.
  */
 

@@ -2,7 +2,7 @@
  * Applications Manager
  *
  * Per-server application form builder + submission review.
- * Create forms, manage questions, open/close, review submissions —
+ * Create forms, manage questions, open/close, review submissions -
  * everything the /appsetup and /applications commands do, in the UI.
  */
 
@@ -121,7 +121,7 @@ export default function ApplicationsPage() {
                 logChannelId: newLogChannel || undefined,
             });
             setShowCreate(false); setNewName(''); setNewDesc(''); setNewStaffRole(''); setNewAcceptedRole(''); setNewLogChannel('');
-            flash('ok', '✅ Form created — add questions below');
+            flash('ok', '✅ Form created - add questions below');
             load();
         } catch (e: any) { flash('err', `❌ ${e.message}`); }
     };
@@ -184,7 +184,7 @@ export default function ApplicationsPage() {
 
             <div>
                 <h1 className="text-3xl font-bold text-foreground">📝 Applications</h1>
-                <p className="text-muted-foreground text-sm mt-1">Build forms, manage questions, review submissions — members apply in Discord with <code className="bg-secondary px-1 rounded">/apply</code>.</p>
+                <p className="text-muted-foreground text-sm mt-1">Build forms, manage questions, review submissions - members apply in Discord with <code className="bg-secondary px-1 rounded">/apply</code>.</p>
             </div>
 
             {message && <p className={`text-sm ${message.type === 'ok' ? 'text-green-500' : 'text-red-500'}`}>{message.text}</p>}
@@ -233,7 +233,7 @@ export default function ApplicationsPage() {
                     {/* Form list */}
                     {forms.length === 0 && !showCreate && (
                         <div className="glass rounded-xl p-8 border border-border/50 text-center text-muted-foreground">
-                            No forms yet — create one and members can apply with <code className="bg-secondary px-1 rounded">/apply</code>.
+                            No forms yet - create one and members can apply with <code className="bg-secondary px-1 rounded">/apply</code>.
                         </div>
                     )}
 
@@ -301,17 +301,17 @@ export default function ApplicationsPage() {
                                     <div className="grid md:grid-cols-2 gap-3">
                                         <select className={inputCls} value={form.logChannelId ?? ''}
                                             onChange={e => patchForm(form.id, { logChannelId: e.target.value || null })}>
-                                            <option value="">Review channel — not set</option>
+                                            <option value="">Review channel - not set</option>
                                             {channels.map(c => <option key={c.id} value={c.id}>#{c.name}</option>)}
                                         </select>
                                         <select className={inputCls} value={form.acceptedRoleId ?? ''}
                                             onChange={e => patchForm(form.id, { acceptedRoleId: e.target.value || null })}>
-                                            <option value="">Accepted role — not set</option>
+                                            <option value="">Accepted role - not set</option>
                                             {roles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
                                         </select>
                                         <select className={inputCls} value={form.staffRoleId ?? ''}
                                             onChange={e => patchForm(form.id, { staffRoleId: e.target.value || null })}>
-                                            <option value="">Staff/reviewer role — not set</option>
+                                            <option value="">Staff/reviewer role - not set</option>
                                             {roles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
                                         </select>
                                         <input className={inputCls} type="number" min={0} max={720} placeholder="Cooldown hours (0 = none)"
@@ -346,7 +346,7 @@ export default function ApplicationsPage() {
                         <div key={sub.id} className="glass rounded-xl p-6 border border-border/50">
                             <div className="flex items-start justify-between mb-4">
                                 <div>
-                                    <p className="font-bold text-foreground">{sub.form?.name ?? 'Application'} — <span className="text-muted-foreground font-normal">user {sub.userId}</span></p>
+                                    <p className="font-bold text-foreground">{sub.form?.name ?? 'Application'} - <span className="text-muted-foreground font-normal">user {sub.userId}</span></p>
                                     <p className="text-xs text-muted-foreground mt-0.5">{new Date(sub.createdAt).toLocaleString()}</p>
                                 </div>
                                 {sub.status === 'pending' && (

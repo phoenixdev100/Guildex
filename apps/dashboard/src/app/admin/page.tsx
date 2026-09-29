@@ -1,10 +1,10 @@
 /**
- * Admin Panel — bot owner only, standalone UI
+ * Admin Panel - bot owner only, standalone UI
  *
  * Completely separate from the normal dashboard: own top bar, own nav,
  * only owner-level controls (global stats, all guilds, module defaults,
  * global audit feed). Gated server-side by SUPER_ADMIN_ID on every
- * endpoint — this page additionally checks /api/dashboard/me.
+ * endpoint - this page additionally checks /api/dashboard/me.
  */
 
 'use client';

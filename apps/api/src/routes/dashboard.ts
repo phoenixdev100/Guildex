@@ -34,7 +34,7 @@ export async function dashboardRoutes(app: FastifyInstance): Promise<void> {
 
     /**
      * GET /api/dashboard/me
-     * Current user's identity + role — the dashboard uses this to
+     * Current user's identity + role - the dashboard uses this to
      * show the owner-only admin navigation.
      */
     app.get('/me', async (request) => {
@@ -46,7 +46,7 @@ export async function dashboardRoutes(app: FastifyInstance): Promise<void> {
 
     /**
      * GET /api/dashboard/admin/overview
-     * Global platform stats across ALL guilds — super admin only.
+     * Global platform stats across ALL guilds - super admin only.
      */
     app.get('/admin/overview', async (request, reply) => {
         if (!isSuperAdminRequest(request)) {
@@ -348,7 +348,7 @@ export async function dashboardRoutes(app: FastifyInstance): Promise<void> {
 
     /**
      * GET /api/dashboard/settings
-     * Get system configuration — super admin only
+     * Get system configuration - super admin only
      */
     app.get('/settings', async (request, reply) => {
         if (!isSuperAdminRequest(request)) {
@@ -369,7 +369,7 @@ export async function dashboardRoutes(app: FastifyInstance): Promise<void> {
 
     /**
      * POST /api/dashboard/settings
-     * Update system configuration — super admin only
+     * Update system configuration - super admin only
      */
     app.post('/settings', async (request, reply) => {
         if (!isSuperAdminRequest(request)) {

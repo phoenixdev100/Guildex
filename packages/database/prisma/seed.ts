@@ -24,7 +24,7 @@ async function main() {
         isDefault: m.isDefault,
     }));
 
-    /* Legacy module list removed — see MODULE_DEFINITIONS in src/modules.ts
+    /* Legacy module list removed - see MODULE_DEFINITIONS in src/modules.ts
     const modules = [
         {
             name: 'moderation',

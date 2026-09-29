@@ -31,12 +31,12 @@ export const personality: Command = {
                 default: 'Balanced, helpful, friendly.',
                 professional: 'Formal, precise, structured.',
                 casual: 'Chill and relaxed, like a friend.',
-                funny: 'Witty — answers with humor.',
+                funny: 'Witty - answers with humor.',
                 roast: 'Playfully roasts you while answering.',
             };
 
             await interaction.reply({
-                content: `🎭 Personality set to **${type}** — ${previews[type] ?? ''}\nTry it with \`/ai chat\`.`,
+                content: `🎭 Personality set to **${type}** - ${previews[type] ?? ''}\nTry it with \`/ai chat\`.`,
                 flags: MessageFlags.Ephemeral,
             });
         } catch (error: any) {

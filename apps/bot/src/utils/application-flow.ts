@@ -5,13 +5,13 @@
  * staff-channel embed with Accept/Deny buttons → role assignment + DM.
  *
  * CustomId scheme:
- *   app_pick_<sessionId>      select menu — choose form
+ *   app_pick_<sessionId>      select menu - choose form
  *   app_modal_<sessionId>     modal page submit
- *   app_next_<sessionId>      button — next question page
- *   app_accept_<subId>        staff button — accept
- *   app_deny_<subId>          staff button — open deny-reason modal
- *   app_denyreason_<subId>    modal — deny reason
- *   app_withdraw_<subId>      user button — withdraw own application
+ *   app_next_<sessionId>      button - next question page
+ *   app_accept_<subId>        staff button - accept
+ *   app_deny_<subId>          staff button - open deny-reason modal
+ *   app_denyreason_<subId>    modal - deny reason
+ *   app_withdraw_<subId>      user button - withdraw own application
  */
 
 import {
@@ -130,7 +130,7 @@ function buildModal(session: Session, form: AppForm): ModalBuilder | null {
     return modal;
 }
 
-/** Entry: /apply — pick form or jump straight to modal. */
+/** Entry: /apply - pick form or jump straight to modal. */
 export async function startApplication(interaction: ChatInputCommandInteraction): Promise<void> {
     const guildId = interaction.guildId!;
     const forms = await fetchForms(guildId, true);
@@ -139,7 +139,7 @@ export async function startApplication(interaction: ChatInputCommandInteraction)
     if (usable.length === 0) {
         await interaction.reply({
             content: forms.length === 0
-                ? '📝 No application forms are set up yet — ask staff to run `/appsetup create`.'
+                ? '📝 No application forms are set up yet - ask staff to run `/appsetup create`.'
                 : '📝 No application forms are open right now.',
             ephemeral: true,
         });
@@ -182,7 +182,7 @@ export async function handleApplicationSelect(interaction: StringSelectMenuInter
     if (!interaction.customId.startsWith('app_pick_')) return;
     const session = getSession(interaction.customId.slice(9));
     if (!session || session.userId !== interaction.user.id) {
-        await interaction.reply({ content: '❌ Session expired — run `/apply` again.', ephemeral: true }).catch(() => {});
+        await interaction.reply({ content: '❌ Session expired - run `/apply` again.', ephemeral: true }).catch(() => {});
         return;
     }
     const form = (await fetchForms(session.guildId, true)).find(f => f.id === interaction.values[0]);
@@ -212,7 +212,7 @@ export async function handleApplicationModal(client: BotClient, interaction: Mod
 
     const session = getSession(customId.slice(10));
     if (!session || session.userId !== interaction.user.id) {
-        await interaction.reply({ content: '❌ Session expired — run `/apply` again.', ephemeral: true }).catch(() => {});
+        await interaction.reply({ content: '❌ Session expired - run `/apply` again.', ephemeral: true }).catch(() => {});
         return;
     }
 
@@ -237,7 +237,7 @@ export async function handleApplicationModal(client: BotClient, interaction: Mod
         session.page++;
         const next = new ButtonBuilder()
             .setCustomId(`app_next_${session.id}`)
-            .setLabel(`Continue — page ${session.page + 1}/${totalPages}`)
+            .setLabel(`Continue - page ${session.page + 1}/${totalPages}`)
             .setStyle(ButtonStyle.Primary)
             .setEmoji('➡️');
         await interaction.reply({
@@ -257,7 +257,7 @@ export async function handleApplicationModal(client: BotClient, interaction: Mod
         );
         sessions.delete(session.id);
         const sub = res.data.submission;
-        await interaction.editReply(`✅ **Application submitted!** (${form.name})\nStaff will review it shortly — you'll get a DM with the result.`);
+        await interaction.editReply(`✅ **Application submitted!** (${form.name})\nStaff will review it shortly - you'll get a DM with the result.`);
         await postSubmissionToStaff(client, form, sub);
     } catch (error: any) {
         sessions.delete(session.id);
@@ -270,7 +270,7 @@ export async function handleApplicationModal(client: BotClient, interaction: Mod
 async function handleNextPage(interaction: ButtonInteraction): Promise<void> {
     const session = getSession(interaction.customId.slice(9));
     if (!session || session.userId !== interaction.user.id) {
-        await interaction.reply({ content: '❌ Session expired — run `/apply` again.', ephemeral: true }).catch(() => {});
+        await interaction.reply({ content: '❌ Session expired - run `/apply` again.', ephemeral: true }).catch(() => {});
         return;
     }
     const form = (await fetchForms(session.guildId)).find(f => f.id === session.formId);
@@ -292,7 +292,7 @@ async function postSubmissionToStaff(client: BotClient, form: AppForm, sub: AppS
         const user = await client.users.fetch(sub.userId).catch(() => null);
         const embed = new EmbedBuilder()
             .setColor('#FEE75C')
-            .setTitle(`📨 New Application — ${form.name}`)
+            .setTitle(`📨 New Application - ${form.name}`)
             .setThumbnail(user?.displayAvatarURL() ?? null)
             .setDescription(sub.answers.map(a => `**${a.question}**\n${a.answer}`).join('\n\n').slice(0, 3900))
             .addFields(
@@ -352,7 +352,7 @@ async function finalizeReview(
         const embed = EmbedBuilder.from(interaction.message!.embeds[0])
             .setColor(status === 'accepted' ? '#57F287' : '#ED4245')
             .setFooter({
-                text: `${status === 'accepted' ? '✅ Accepted' : '❌ Denied'} by ${reviewer.tag}${reason ? ` — ${reason}` : ''}`,
+                text: `${status === 'accepted' ? '✅ Accepted' : '❌ Denied'} by ${reviewer.tag}${reason ? ` - ${reason}` : ''}`,
             });
         await interaction.message!.edit({ embeds: [embed], components: [] });
     } catch { /* message may be gone */ }
@@ -470,7 +470,7 @@ async function handleDenyReasonModal(client: BotClient, interaction: ModalSubmit
             { reviewerId: interaction.user.id, action: 'deny', reason }
         );
         await finalizeReview(client, interaction, res.data.submission, 'denied', reason);
-        await interaction.reply({ content: `❌ Denied <@${sub.userId}>'s application${reason ? ` — ${reason}` : ''}.`, ephemeral: true });
+        await interaction.reply({ content: `❌ Denied <@${sub.userId}>'s application${reason ? ` - ${reason}` : ''}.`, ephemeral: true });
     } catch (error: any) {
         await interaction.reply({ content: `❌ ${error?.response?.data?.error ?? 'Review failed'}`, ephemeral: true }).catch(() => {});
     }

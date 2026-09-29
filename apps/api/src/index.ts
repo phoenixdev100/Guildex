@@ -84,7 +84,7 @@ async function main() {
     }
 }
 
-// Graceful shutdown — bounded: force-exits after 3s even if a
+// Graceful shutdown - bounded: force-exits after 3s even if a
 // connection close hangs (ioredis quit can stall mid-reconnect).
 async function shutdown(signal: string) {
     logger.info(`${signal} received, shutting down...`);
@@ -93,7 +93,7 @@ async function shutdown(signal: string) {
     forceExit.unref();
 
     try {
-        // Forceful disconnects — never block the exit
+        // Forceful disconnects - never block the exit
         redis.disconnect();
         await prisma.$disconnect().catch(() => {});
 

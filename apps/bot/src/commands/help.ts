@@ -6,7 +6,7 @@
  * paginated command views and per-category theming.
  *
  * All embeds and components are precomputed once at invocation so
- * button clicks only do a map lookup — no rebuilding per render.
+ * button clicks only do a map lookup - no rebuilding per render.
  */
 
 import {
@@ -90,7 +90,7 @@ function buildMainEmbed(
     return new EmbedBuilder()
         .setColor(BRAND_COLOR)
         .setAuthor({
-            name: `${botUser?.username ?? 'Bot'} — Help Center`,
+            name: `${botUser?.username ?? 'Bot'} - Help Center`,
             iconURL: botUser?.displayAvatarURL() ?? undefined,
         })
         .setThumbnail(botUser?.displayAvatarURL({ size: 256 }) ?? null)
@@ -105,7 +105,7 @@ function buildMainEmbed(
             {
                 name: '💡 Quick Tips',
                 value:
-                    '• `/command` — run any command directly\n' +
+                    '• `/command` - run any command directly\n' +
                     '• Dropdown lists every category **A → Z**\n' +
                     '• Use **◀ ▶** to flip through the category list and long categories',
                 inline: false,
@@ -183,14 +183,14 @@ export const help: Command = {
                 );
             }
 
-            // Prebuilt embed for every category — all commands on one page
+            // Prebuilt embed for every category - all commands on one page
             const categoryEmbeds = new Map<string, EmbedBuilder>();
             for (const category of allCategories) {
                 const commands = commandsByCategory[category];
                 const info = categoryInfo[category] ?? { emoji: '📁', description: 'Commands', color: BRAND_COLOR };
 
                 let body = `${info.description}\n\n` +
-                    commands.map((c) => `\`/${c.name}\` — ${c.description}`).join('\n');
+                    commands.map((c) => `\`/${c.name}\` - ${c.description}`).join('\n');
 
                 // Defensive: truncate if a category ever exceeds the embed limit
                 if (body.length > MAX_EMBED_DESC) {
@@ -212,13 +212,13 @@ export const help: Command = {
 
             const mainEmbed = buildMainEmbed(interaction, client.commands.size, allCategories.length);
 
-            // "All Commands" directory — every category + all command names,
+            // "All Commands" directory - every category + all command names,
             // chunked across embeds to stay under Discord's limits
             const allEmbeds: EmbedBuilder[] = [];
             {
                 let embed = new EmbedBuilder()
                     .setColor(BRAND_COLOR)
-                    .setTitle('📖 All Commands — Full Directory');
+                    .setTitle('📖 All Commands - Full Directory');
                 let used = 0;
                 for (const category of allCategories) {
                     const info = categoryInfo[category] ?? { emoji: '📁', description: '', color: BRAND_COLOR };

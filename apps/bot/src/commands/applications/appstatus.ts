@@ -41,7 +41,7 @@ export const appstatus: Command = {
                 .setDescription(subs.slice(0, 10).map(s =>
                     `${STATUS_ICON[s.status] ?? s.status} **${(s as any).form?.name ?? 'Form'}**\n` +
                     `Submitted <t:${Math.floor(new Date(s.createdAt).getTime() / 1000)}:R>` +
-                    (s.reason ? ` — *${s.reason}*` : '')
+                    (s.reason ? ` - *${s.reason}*` : '')
                 ).join('\n\n'));
 
             const pending = subs.find(s => s.status === 'pending');
@@ -58,7 +58,7 @@ export const appstatus: Command = {
             await interaction.editReply({ embeds: [embed], components });
         } catch (error: any) {
             console.error('appstatus command error:', error);
-            await interaction.editReply('❌ Could not load your applications — the API may be unreachable.').catch(() => {});
+            await interaction.editReply('❌ Could not load your applications - the API may be unreachable.').catch(() => {});
         }
     }
 };

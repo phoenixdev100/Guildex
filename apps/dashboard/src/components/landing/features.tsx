@@ -1,6 +1,19 @@
-import { ArrowRight, Layers3, Puzzle, Server, Settings2, Shield, Zap } from 'lucide-react';
+import { ArrowRight, Check, Database, Layers3, Puzzle, Server, Settings2, Shield, Ticket, Trophy, Zap } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { MODULES, STATS } from './data';
+import { STATS } from './data';
+import { ModulesBrowser } from './modules-browser';
+
+type Vis = 'modules' | 'api' | 'term' | 'dash' | 'infra';
+
+interface BentoTile {
+    title: string;
+    desc: string;
+    icon: LucideIcon;
+    wide?: boolean;
+    meta?: string[];
+    vis?: Vis;
+    points?: string[];
+}
 
 export function Stats() {
     return (
@@ -9,9 +22,11 @@ export function Stats() {
                 <div className="stripRow">
                     {STATS.map(({ value, label, icon: Icon }) => (
                         <div className="stripCell" key={label}>
-                            <Icon size={18} />
-                            <b>{value}</b>
-                            <span>{label}</span>
+                            <div className="stripIcon"><Icon size={18} /></div>
+                            <div>
+                                <b>{value}</b>
+                                <span>{label}</span>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -20,44 +35,49 @@ export function Stats() {
     );
 }
 
-const BENTO: { title: string; desc: string; icon: LucideIcon; wide?: boolean; meta?: string[] }[] = [
+// Bento layout: wide tiles span 3 cols, regular span 2 of a 6-col grid.
+// Order matters — each row must fill exactly 6 columns or a gap appears.
+// Row 1: wide + wide (3+3). Row 2: regular x3 (2+2+2).
+const BENTO: BentoTile[] = [
     {
         title: 'Fully modular architecture',
-        desc: 'Every feature is an independent module. Enable only what your community needs and configure each one per server — nothing runs unless you turn it on.',
+        desc: 'Every feature is an independent module. Enable only what your community needs and configure each one per server - nothing runs unless you turn it on.',
         icon: Puzzle,
         wide: true,
-        meta: ['Per-guild toggles', 'Zero redeploys', 'Isolated config'],
-    },
-    {
-        title: 'Real infrastructure',
-        desc: 'PostgreSQL for persistence, Redis for cache and rate limits — the same stack production services run on.',
-        icon: Server,
-        meta: ['PostgreSQL', 'Redis', 'Prisma'],
-    },
-    {
-        title: 'REST API',
-        desc: 'A Fastify API with 70+ endpoints backs the dashboard and can power your own tooling.',
-        icon: Zap,
-        wide: true,
-        meta: ['Fastify 5', 'API-key auth', 'OpenAPI-ready'],
-    },
-    {
-        title: 'Moderation first',
-        desc: 'Cases, warnings, automod rules and audit logs with a searchable record per member.',
-        icon: Shield,
+        vis: 'modules',
+        meta: ['Per-guild toggles', 'Zero redeploys'],
     },
     {
         title: 'Web dashboard',
         desc: 'Configure every module visually. Discord OAuth sign-in with per-guild access control built in.',
         icon: Settings2,
         wide: true,
-        meta: ['Next.js 15', 'Discord OAuth', 'Guild-scoped'],
+        vis: 'dash',
+        meta: ['Next.js 15', 'Discord OAuth'],
+        points: [
+            'Role-based access for owners, admins and moderators',
+            'Changes apply to the bot instantly via the API',
+        ],
+    },
+    {
+        title: 'Real infrastructure',
+        desc: 'PostgreSQL for persistence, Redis for cache and rate limits - the same stack production services run on.',
+        icon: Server,
+        vis: 'infra',
+    },
+    {
+        title: 'REST API',
+        desc: 'A Fastify API with 70+ endpoints backs the dashboard and can power your own tooling.',
+        icon: Zap,
+        vis: 'api',
+        meta: ['Fastify 5', 'API-key auth'],
     },
     {
         title: 'Deploy anywhere',
         desc: 'Three Docker images, one compose file, two isolated networks. Production-ready out of the box.',
         icon: Layers3,
-        meta: ['Docker Compose', 'Network isolation', 'One-command deploy'],
+        vis: 'term',
+        meta: ['Compose', 'Isolated nets'],
     },
 ];
 
@@ -69,29 +89,133 @@ export function Features() {
                     <div className="kicker">Platform</div>
                     <h2>Everything your community needs.<br />Nothing it doesn&rsquo;t.</h2>
                     <p className="secSub">
-                        MasterBot is built like a platform, not a script — modular
+                        MasterBot is built like a platform, not a script - modular
                         features, a real persistence layer and a dashboard designed
                         for people who run servers, not just chat in them.
                     </p>
                 </div>
 
                 <div className="bento">
-                    {BENTO.map(({ title, desc, icon: Icon, wide, meta }) => (
+                    {BENTO.map(({ title, desc, icon: Icon, wide, meta, vis, points }) => (
                         <div className={`tile ${wide ? 'wide' : ''}`} key={title}>
                             <span className="tileGlow" />
-                            <div className="tileIcon"><Icon size={18} /></div>
-                            <h3>{title}</h3>
-                            <p>{desc}</p>
-                            {meta && (
-                                <div className="tileMeta">
-                                    {meta.map((m) => <i key={m}>{m}</i>)}
-                                </div>
-                            )}
+                            <div className="tileBody">
+                                <div className="tileIcon"><Icon size={18} /></div>
+                                <h3>{title}</h3>
+                                <p>{desc}</p>
+                                {points && (
+                                    <ul className="tilePoints">
+                                        {points.map((pt) => (
+                                            <li key={pt}><Check size={11} />{pt}</li>
+                                        ))}
+                                    </ul>
+                                )}
+                                {meta && (
+                                    <div className="tileMeta">
+                                        {meta.map((m) => <i key={m}>{m}</i>)}
+                                    </div>
+                                )}
+                            </div>
+                            {vis === 'modules' && <ModulesVis />}
+                            {vis === 'api' && <ApiVis />}
+                            {vis === 'dash' && <DashVis />}
+                            {vis === 'term' && <TermVis />}
+                            {vis === 'infra' && <InfraVis />}
                         </div>
                     ))}
                 </div>
             </div>
         </section>
+    );
+}
+
+const VIS_MODS: [string, LucideIcon, boolean][] = [
+    ['Moderation', Shield, true],
+    ['Leveling', Trophy, true],
+    ['Tickets', Ticket, false],
+];
+
+function ModulesVis() {
+    return (
+        <div className="tileVis">
+            {VIS_MODS.map(([n, Icon, on]) => (
+                <div className="fmod" key={n}>
+                    <span className="fmodIcon"><Icon size={12} /></span>
+                    <div><b>{n}</b></div>
+                    <span className={`sw ${on ? '' : 'off'}`} />
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function ApiVis() {
+    return (
+        <div className="visDark">
+            <div className="ln"><b><span className="purple">GET</span> /api/guilds/:id/modules</b><span className="ok">200</span></div>
+            <div className="ln"><b><span className="purple">PUT</span> /api/guilds/:id/modules/:m</b><span className="ok">200</span></div>
+            <div className="ln"><b><span className="purple">GET</span> /api/moderation/cases</b><span className="ok">200</span></div>
+            <div className="ln dim"><span>x-api-key · authenticated</span><span>avg 14ms</span></div>
+        </div>
+    );
+}
+
+const DASH_BARS = [38, 55, 42, 68, 50, 80, 62, 92];
+
+function DashVis() {
+    return (
+        <div className="tileVis">
+            <div className="dashMini">
+                <div className="dashMiniHead">
+                    <span>
+                        <b>Overview</b>
+                        <small>Phoenix Community</small>
+                    </span>
+                    <span className="fchip">● Online</span>
+                </div>
+                <div className="dashStats">
+                    {[
+                        ['Members', '12.4K'],
+                        ['Modules', '28'],
+                        ['Cases', '342'],
+                    ].map(([k, v]) => (
+                        <div key={k}><span>{k}</span><b>{v}</b></div>
+                    ))}
+                </div>
+                <div className="chart mini">
+                    {DASH_BARS.map((h, i) => <i key={i} style={{ height: `${h}%` }} />)}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+const INFRA_SERVICES: [string, LucideIcon, string, string][] = [
+    ['PostgreSQL', Database, 'primary', '9ms'],
+    ['Redis', Zap, 'cache', '2ms'],
+];
+
+function InfraVis() {
+    return (
+        <div className="tileVis">
+            {INFRA_SERVICES.map(([n, Icon, role, lat]) => (
+                <div className="fmod" key={n}>
+                    <span className="fmodIcon"><Icon size={12} /></span>
+                    <div><b>{n}</b><small>{role}</small></div>
+                    <span className="lat">● {lat}</span>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function TermVis() {
+    return (
+        <div className="visDark">
+            <div className="dim">$ docker compose up -d</div>
+            <div><span className="ok">✓</span> api <span className="ok">✓</span> bot <span className="ok">✓</span> dashboard</div>
+            <div><span className="ok">✓</span> postgres <span className="ok">✓</span> redis <span className="dim">— 5 services</span></div>
+        </div>
     );
 }
 
@@ -113,17 +237,7 @@ export function Modules() {
                     </a>
                 </div>
 
-                <div className="modGrid">
-                    {MODULES.map(({ name, desc, icon: Icon }) => (
-                        <div className="mod" key={name}>
-                            <span className="modIcon"><Icon size={15} /></span>
-                            <div>
-                                <b>{name}</b>
-                                <small>{desc}</small>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <ModulesBrowser />
             </div>
         </section>
     );

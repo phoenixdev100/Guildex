@@ -30,24 +30,31 @@ export interface ModuleItem {
     name: string;
     desc: string;
     icon: LucideIcon;
+    cat: ModuleCategory;
 }
 
+export type ModuleCategory = 'Moderation' | 'Engagement' | 'Economy' | 'Utility' | 'Entertainment';
+
+export const MODULE_CATEGORIES: ('All' | ModuleCategory)[] = [
+    'All', 'Moderation', 'Engagement', 'Economy', 'Utility', 'Entertainment',
+];
+
 export const MODULES: ModuleItem[] = [
-    { name: 'Moderation', desc: 'Warn, mute, ban, cases & audit trail', icon: Shield },
-    { name: 'Leveling', desc: 'XP, ranks & leaderboards', icon: Crown },
-    { name: 'Economy', desc: 'Currency, shop, jobs & trading', icon: Database },
-    { name: 'Tickets', desc: 'Panel-based support system', icon: Ticket },
-    { name: 'AI Commands', desc: 'Chat, images & text-to-speech', icon: Sparkles },
-    { name: 'Welcome & Autoroles', desc: 'Greet members, auto-assign roles', icon: Users },
-    { name: 'Reaction Roles', desc: 'Self-assignable roles via reactions', icon: Heart },
-    { name: 'Giveaways', desc: 'Timed community giveaways', icon: Gift },
-    { name: 'Suggestions', desc: 'Collect & vote on ideas', icon: Wand2 },
-    { name: 'Music', desc: 'High-quality voice playback', icon: Music2 },
-    { name: 'Fun & Games', desc: 'Minigames & engagement commands', icon: Trophy },
-    { name: 'Custom Commands', desc: 'Build commands without code', icon: Code2 },
-    { name: 'AFK & Utilities', desc: 'Status, reminders & tools', icon: Clock3 },
-    { name: 'Starboard', desc: 'Pin the community\'s best posts', icon: Star },
-    { name: 'Translation', desc: 'Multilingual message support', icon: Globe2 },
+    { name: 'Moderation', desc: 'Warn, mute, ban, cases & audit trail', icon: Shield, cat: 'Moderation' },
+    { name: 'Leveling', desc: 'XP, ranks & leaderboards', icon: Crown, cat: 'Engagement' },
+    { name: 'Economy', desc: 'Currency, shop, jobs & trading', icon: Database, cat: 'Economy' },
+    { name: 'Tickets', desc: 'Panel-based support system', icon: Ticket, cat: 'Utility' },
+    { name: 'AI Commands', desc: 'Chat, images & text-to-speech', icon: Sparkles, cat: 'Utility' },
+    { name: 'Welcome & Autoroles', desc: 'Greet members, auto-assign roles', icon: Users, cat: 'Engagement' },
+    { name: 'Reaction Roles', desc: 'Self-assignable roles via reactions', icon: Heart, cat: 'Engagement' },
+    { name: 'Giveaways', desc: 'Timed community giveaways', icon: Gift, cat: 'Engagement' },
+    { name: 'Suggestions', desc: 'Collect & vote on ideas', icon: Wand2, cat: 'Engagement' },
+    { name: 'Music', desc: 'High-quality voice playback', icon: Music2, cat: 'Entertainment' },
+    { name: 'Fun & Games', desc: 'Minigames & engagement commands', icon: Trophy, cat: 'Entertainment' },
+    { name: 'Custom Commands', desc: 'Build commands without code', icon: Code2, cat: 'Utility' },
+    { name: 'AFK & Utilities', desc: 'Status, reminders & tools', icon: Clock3, cat: 'Utility' },
+    { name: 'Starboard', desc: 'Pin the community\'s best posts', icon: Star, cat: 'Engagement' },
+    { name: 'Translation', desc: 'Multilingual message support', icon: Globe2, cat: 'Utility' },
 ];
 
 export const STATS: { value: string; label: string; icon: LucideIcon }[] = [
@@ -69,7 +76,7 @@ export const SIDEBAR: [string, LucideIcon][] = [
 ];
 
 export const TICKS: string[] = [
-    'Enable or disable modules per server — no redeploys',
+    'Enable or disable modules per server - no redeploys',
     'Moderation cases, audit logs and guild analytics',
     'Ticket panels, applications and custom commands',
     'Persistent data in PostgreSQL, cached through Redis',
@@ -99,7 +106,7 @@ export const STEPS: { title: string; desc: string; code?: string }[] = [
 
 export const TESTIMONIALS: { quote: string; name: string; role: string; initials: string }[] = [
     {
-        quote: 'MasterBot has everything we needed. From moderation to leveling it just works — and the dashboard is genuinely good.',
+        quote: 'MasterBot has everything we needed. From moderation to leveling it just works - and the dashboard is genuinely good.',
         name: 'Alex',
         role: 'Community Owner',
         initials: 'AX',
@@ -121,15 +128,15 @@ export const TESTIMONIALS: { quote: string; name: string; role: string; initials
 export const FAQS: { q: string; a: string }[] = [
     {
         q: 'Is MasterBot free to use?',
-        a: 'Yes — it is open source and self-hosted. You run it on your own infrastructure, so there are no subscription fees and your data never leaves your servers.',
+        a: 'Yes - it is open source and self-hosted. You run it on your own infrastructure, so there are no subscription fees and your data never leaves your servers.',
     },
     {
         q: 'What do I need to run it?',
-        a: 'A Discord application token, PostgreSQL and Redis. The whole stack ships as Docker images — `docker compose -f docker-compose.prod.yml up -d` starts everything on a VPS.',
+        a: 'A Discord application token, PostgreSQL and Redis. The whole stack ships as Docker images - `docker compose -f docker-compose.prod.yml up -d` starts everything on a VPS.',
     },
     {
         q: 'Can I enable features per server?',
-        a: 'Every feature is a module. Modules can be toggled per guild from the dashboard — moderation, economy, tickets, leveling and dozens more are independent.',
+        a: 'Every feature is a module. Modules can be toggled per guild from the dashboard - moderation, economy, tickets, leveling and dozens more are independent.',
     },
     {
         q: 'How does the dashboard authenticate?',
@@ -137,6 +144,6 @@ export const FAQS: { q: string; a: string }[] = [
     },
     {
         q: 'Can I extend it with my own commands?',
-        a: 'The codebase is a pnpm monorepo — commands live in `apps/bot/src/commands`, grouped by category. Drop a file in, register it, and module gating applies automatically.',
+        a: 'The codebase is a pnpm monorepo - commands live in `apps/bot/src/commands`, grouped by category. Drop a file in, register it, and module gating applies automatically.',
     },
 ];

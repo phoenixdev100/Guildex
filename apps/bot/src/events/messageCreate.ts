@@ -67,7 +67,7 @@ async function handleAfk(message: Message): Promise<void> {
             }
         }
     } catch {
-        // AFK lookup failed — non-critical
+        // AFK lookup failed - non-critical
     }
 
     // 2) Notify when mentioned users are AFK
@@ -81,7 +81,7 @@ async function handleAfk(message: Message): Promise<void> {
                 `/guilds/${guildId}/afk/${user.id}`
             );
             if (res.data?.afk) {
-                notices.push(`💤 **${user.username}** is AFK: ${res.data.afk.reason} — *${timeAgo(res.data.afk.since)}*`);
+                notices.push(`💤 **${user.username}** is AFK: ${res.data.afk.reason} - *${timeAgo(res.data.afk.since)}*`);
             }
         } catch {
             // skip failed lookups

@@ -36,7 +36,7 @@ export function Showcase() {
                     <div className="kicker">Web dashboard</div>
                     <h2>Manage everything without typing a command.</h2>
                     <p className="secSub">
-                        A clean admin surface for moderators and owners — built on
+                        A clean admin surface for moderators and owners - built on
                         Next.js, authenticated with Discord OAuth, scoped per guild.
                     </p>
 
@@ -108,7 +108,7 @@ export function Steps() {
                     <div className="kicker">Setup</div>
                     <h2>Running in minutes, not days.</h2>
                     <p className="secSub">
-                        Clone, configure, deploy — the whole stack comes up with one
+                        Clone, configure, deploy - the whole stack comes up with one
                         compose command.
                     </p>
                 </div>

@@ -3,13 +3,13 @@
 .vscode
 .idea
 
-# Secrets — never bake env files into an image
+# Secrets - never bake env files into an image
 .env
 .env.*
 **/.env
 **/.env.*
 
-# Dependencies & build output — installed/built inside Docker.
+# Dependencies & build output - installed/built inside Docker.
 # (Required: without this, `COPY . .` would overwrite the Linux
 # node_modules staged in the deps layer with Windows host copies.)
 **/node_modules
@@ -25,7 +25,7 @@
 **/tmp
 **/temp
 
-# Docker config — not needed inside images
+# Docker config - not needed inside images
 **/Dockerfile
 docker-compose*.yml
 .dockerignore

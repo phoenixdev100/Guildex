@@ -32,7 +32,7 @@ export const dm: Command = {
             return;
         }
 
-        // Defer first — user.send can exceed the 3s interaction window
+        // Defer first - user.send can exceed the 3s interaction window
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
         try {
@@ -48,7 +48,7 @@ export const dm: Command = {
         } catch (error: any) {
             // Discord throws when the user has DMs disabled or blocked the bot
             await interaction.editReply({
-                content: `❌ Could not DM ${user.tag} — they may have DMs disabled.`,
+                content: `❌ Could not DM ${user.tag} - they may have DMs disabled.`,
             });
         }
     }

@@ -12,7 +12,7 @@ export function Cta() {
                         <h2>Put your community back in your hands.</h2>
                         <p>
                             Open source, self-hosted and fully customizable.
-                            No monthly bot fees — your data stays on your infrastructure.
+                            No monthly bot fees - your data stays on your infrastructure.
                         </p>
                     </div>
                     <div className="ctaBtns">
@@ -73,7 +73,7 @@ export function Footer() {
                 </div>
 
                 <div className="footBar">
-                    <span>© {year} MasterBot — open source software.</span>
+                    <span>© {year} MasterBot - open source software.</span>
                     <div className="icons">
                         <a className="iconBtn" href={REPO_URL} aria-label="GitHub">
                             <Github size={15} />

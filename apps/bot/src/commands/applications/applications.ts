@@ -57,7 +57,7 @@ export const applications: Command = {
                     const user = interaction.options.getUser('user', true);
                     const reason = interaction.options.getString('reason') ?? undefined;
                     await apiClient.post(`/guilds/${guildId}/applications/blacklist`, { userId: user.id, reason });
-                    await interaction.editReply(`🚫 **${user.username}** blacklisted from applications${reason ? ` — ${reason}` : ''}.`);
+                    await interaction.editReply(`🚫 **${user.username}** blacklisted from applications${reason ? ` - ${reason}` : ''}.`);
                 } else if (sub === 'remove') {
                     const user = interaction.options.getUser('user', true);
                     try {
@@ -75,7 +75,7 @@ export const applications: Command = {
                         .setColor('#ED4245')
                         .setTitle('🚫 Application Blacklist')
                         .setDescription(rows.length
-                            ? rows.map(r => `<@${r.userId}>${r.reason ? ` — *${r.reason}*` : ''} • <t:${Math.floor(new Date(r.createdAt).getTime() / 1000)}:R>`).join('\n')
+                            ? rows.map(r => `<@${r.userId}>${r.reason ? ` - *${r.reason}*` : ''} • <t:${Math.floor(new Date(r.createdAt).getTime() / 1000)}:R>`).join('\n')
                             : 'No blacklisted users.');
                     await interaction.editReply({ embeds: [embed] });
                 }
@@ -94,7 +94,7 @@ export const applications: Command = {
                 if (sub === 'view') {
                     const embed = new EmbedBuilder()
                         .setColor(submission.status === 'accepted' ? '#57F287' : submission.status === 'denied' ? '#ED4245' : '#FEE75C')
-                        .setTitle(`📄 Application — ${submission.form?.name ?? 'Form'}`)
+                        .setTitle(`📄 Application - ${submission.form?.name ?? 'Form'}`)
                         .setDescription((submission.answers as { question: string; answer: string }[])
                             .map(a => `**${a.question}**\n${a.answer}`).join('\n\n').slice(0, 3900) || '*No answers*')
                         .addFields(
@@ -140,7 +140,7 @@ export const applications: Command = {
                         : `Your **${submission.form?.name}** application in **${interaction.guild.name}** was **denied**.${reason ? `\nReason: ${reason}` : ''}`);
                 } catch { /* DMs closed */ }
 
-                await interaction.editReply(`${action === 'accept' ? '✅ Accepted' : '❌ Denied'} <@${submission.userId}>'s application${reason ? ` — ${reason}` : ''}.${extra}`);
+                await interaction.editReply(`${action === 'accept' ? '✅ Accepted' : '❌ Denied'} <@${submission.userId}>'s application${reason ? ` - ${reason}` : ''}.${extra}`);
                 return;
             }
 
@@ -156,7 +156,7 @@ export const applications: Command = {
                     .setTitle(`📋 ${status[0].toUpperCase() + status.slice(1)} Applications`)
                     .setDescription(rows.length
                         ? rows.slice(0, 15).map(s =>
-                            `${STATUS_ICON[s.status] ?? ''} <@${s.userId}> — **${s.form?.name ?? 'Form'}** • <t:${Math.floor(new Date(s.createdAt).getTime() / 1000)}:R> • \`${s.id}\``
+                            `${STATUS_ICON[s.status] ?? ''} <@${s.userId}> - **${s.form?.name ?? 'Form'}** • <t:${Math.floor(new Date(s.createdAt).getTime() / 1000)}:R> • \`${s.id}\``
                         ).join('\n')
                         : `No ${status} applications.`);
                 await interaction.editReply({ embeds: [embed] });
@@ -170,7 +170,7 @@ export const applications: Command = {
                 const { counts, forms } = res.data;
                 const embed = new EmbedBuilder()
                     .setColor('#5865F2')
-                    .setTitle(`📊 Application Stats — ${interaction.guild.name}`)
+                    .setTitle(`📊 Application Stats - ${interaction.guild.name}`)
                     .addFields(
                         { name: '🟡 Pending', value: `${counts.pending ?? 0}`, inline: true },
                         { name: '🟢 Accepted', value: `${counts.accepted ?? 0}`, inline: true },
