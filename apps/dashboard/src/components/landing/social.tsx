@@ -9,7 +9,7 @@ export function Testimonials() {
                     <div className="kicker">Community</div>
                     <h2>Loved by server teams.</h2>
                     <p className="secSub">
-                        Owners and admins choose MasterBot for control, reliability
+                        Owners and admins choose Guildex for control, reliability
                         and a dashboard that feels like a real product.
                     </p>
                 </div>

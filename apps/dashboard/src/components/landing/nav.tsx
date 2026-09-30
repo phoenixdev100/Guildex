@@ -1,13 +1,13 @@
 import Link from 'next/link';
-import { ArrowRight, Bot, Github } from 'lucide-react';
+import { ArrowRight, Github } from 'lucide-react';
 import { REPO_URL } from './data';
 
 export function Nav() {
     return (
         <nav className="nav">
             <Link href="/" className="logo">
-                <span className="logoMark"><Bot size={17} /></span>
-                MasterBot
+                <span className="logoMark"><img className="logoFill" src="/logo.png" alt="Guildex" /></span>
+                Guildex
                 <span className="logoTag">Self-Hosted</span>
             </Link>
 

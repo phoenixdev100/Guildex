@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import {
     ArrowRight,
-    Bot,
     Check,
     ChevronDown,
     Database,
@@ -61,7 +60,7 @@ function ModulesPanel() {
 
             <div className="frameBody">
                 <aside className="fside">
-                    <div className="fsideLogo"><i><Bot size={12} /></i> MasterBot</div>
+                    <div className="fsideLogo"><img className="logoFill" src="/logo.png" alt="" /> Guildex</div>
                     {SIDEBAR.map(([name, Icon], i) => (
                         <div className={`fItem ${i === 1 ? 'on' : ''}`} key={name}>
                             <Icon size={12} /> {name}

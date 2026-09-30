@@ -36,7 +36,7 @@ export function Stats() {
 }
 
 // Bento layout: wide tiles span 3 cols, regular span 2 of a 6-col grid.
-// Order matters — each row must fill exactly 6 columns or a gap appears.
+// Order matters - each row must fill exactly 6 columns or a gap appears.
 // Row 1: wide + wide (3+3). Row 2: regular x3 (2+2+2).
 const BENTO: BentoTile[] = [
     {
@@ -89,7 +89,7 @@ export function Features() {
                     <div className="kicker">Platform</div>
                     <h2>Everything your community needs.<br />Nothing it doesn&rsquo;t.</h2>
                     <p className="secSub">
-                        MasterBot is built like a platform, not a script - modular
+                        Guildex is built like a platform, not a script - modular
                         features, a real persistence layer and a dashboard designed
                         for people who run servers, not just chat in them.
                     </p>
@@ -214,7 +214,7 @@ function TermVis() {
         <div className="visDark">
             <div className="dim">$ docker compose up -d</div>
             <div><span className="ok">✓</span> api <span className="ok">✓</span> bot <span className="ok">✓</span> dashboard</div>
-            <div><span className="ok">✓</span> postgres <span className="ok">✓</span> redis <span className="dim">— 5 services</span></div>
+            <div><span className="ok">✓</span> postgres <span className="ok">✓</span> redis <span className="dim">- 5 services</span></div>
         </div>
     );
 }

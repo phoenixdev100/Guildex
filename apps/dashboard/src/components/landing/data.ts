@@ -84,7 +84,7 @@ export const TICKS: string[] = [
 
 export const TESTIMONIALS: { quote: string; name: string; role: string; initials: string }[] = [
     {
-        quote: 'MasterBot has everything we needed. From moderation to leveling it just works - and the dashboard is genuinely good.',
+        quote: 'Guildex has everything we needed. From moderation to leveling it just works - and the dashboard is genuinely good.',
         name: 'Alex',
         role: 'Community Owner',
         initials: 'AX',
@@ -105,7 +105,7 @@ export const TESTIMONIALS: { quote: string; name: string; role: string; initials
 
 export const FAQS: { q: string; a: string }[] = [
     {
-        q: 'Is MasterBot free to use?',
+        q: 'Is Guildex free to use?',
         a: 'Yes - it is open source and self-hosted. You run it on your own infrastructure, so there are no subscription fees and your data never leaves your servers.',
     },
     {

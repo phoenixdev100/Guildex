@@ -12,10 +12,10 @@ import { SessionProvider } from '@/components/providers/session-provider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'Discord Bot Platform - Dashboard',
-    description: 'Manage your Discord bot with a powerful dashboard',
+    title: 'Guildex — Discord Bot Platform',
+    description: 'Guildex — the self-hosted Discord bot platform. Manage your community with a powerful dashboard.',
     icons: {
-        icon: '/favicon.ico',
+        icon: '/logo.png',
     },
 };
 
