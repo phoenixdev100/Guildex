@@ -15,7 +15,7 @@ import { Faq, Testimonials } from '@/components/landing/social';
 import { Cta, Footer } from '@/components/landing/closing';
 
 export const metadata: Metadata = {
-    title: 'MasterBot - Self-Hosted Discord Bot Platform',
+    title: 'Guildex - Self-Hosted Discord Bot Platform',
     description:
         'A modular Discord bot with a powerful web dashboard, REST API and real database. ' +
         'Everything your community needs, fully customizable and under your control.',

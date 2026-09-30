@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, Bot, Github, Rocket } from 'lucide-react';
+import { ArrowRight, Github, Rocket } from 'lucide-react';
 import { REPO_URL } from './data';
 
 export function Cta() {
@@ -7,7 +7,7 @@ export function Cta() {
         <section className="section" style={{ paddingTop: 0, paddingBottom: 'clamp(36px, 4vw, 56px)' }}>
             <div className="wrap">
                 <div className="ctaCard">
-                    <span className="logoMark ctaMark"><Bot size={18} /></span>
+                    <img className="logoFill ctaMark" src="/logo.png" alt="Guildex" />
                     <h2>Put your community back in your hands.</h2>
                     <p>
                         Open source, self-hosted and fully customizable.
@@ -36,8 +36,8 @@ export function Footer() {
                 <div className="footTop">
                     <div className="footBrand">
                         <Link href="/" className="logo">
-                            <span className="logoMark"><Bot size={17} /></span>
-                            MasterBot
+                            <span className="logoMark"><img className="logoFill" src="/logo.png" alt="Guildex" /></span>
+                            Guildex
                         </Link>
                         <p>The self-hosted Discord platform. Open source under MIT.</p>
                     </div>

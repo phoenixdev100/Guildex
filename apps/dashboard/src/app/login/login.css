@@ -1,0 +1,189 @@
+/* ============================================================
+   Login — single centered card: form left, product UI right.
+   Same design language as the landing page (.site).
+   Scoped to .auth so globals.css dark theme can't leak in.
+   ============================================================ */
+
+.auth {
+  min-height: 100vh;
+  display: grid; place-items: center;
+  padding: 24px 18px;
+  background:
+    radial-gradient(50% 40% at 18% 8%, rgba(108, 75, 244, .08), transparent 60%),
+    radial-gradient(45% 45% at 88% 90%, rgba(90, 120, 255, .07), transparent 60%),
+    #fafbfe;
+  color: #0d1120;
+}
+.auth .authCol { width: 100%; max-width: 940px; }
+
+/* ---------- the card ---------- */
+.auth .authCard {
+  display: grid; grid-template-columns: 1.05fr .95fr;
+  background: #fff; border: 1px solid #e6e8f2; border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(20, 24, 48, .10), 0 4px 16px rgba(20, 24, 48, .05);
+  overflow: hidden;
+}
+
+/* ---------- left — sign-in ---------- */
+.auth .authLeft {
+  display: flex; flex-direction: column;
+  padding: clamp(26px, 3.5vw, 44px);
+}
+.auth .authBrand {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-size: 15px; font-weight: 700; color: #0d1120; letter-spacing: -.01em;
+  width: fit-content;
+}
+.auth .authLogo {
+  width: 30px; height: 30px;
+  display: grid; place-items: center;
+}
+.auth img.logoFill { object-fit: contain; display: block; }
+.auth .authLogo img.logoFill { width: 100%; height: 100%; }
+.auth img.demoLogo.logoFill { width: 22px; height: 22px; flex-shrink: 0; }
+.auth .authBox { width: 100%; max-width: 380px; margin: auto 0; padding: 30px 0; }
+
+.auth .authBox h1 { font-size: 26px; font-weight: 800; letter-spacing: -.025em; }
+.auth .authSub { font-size: 13.5px; color: #5a6178; line-height: 1.6; margin-top: 8px; }
+
+.auth .authErr {
+  margin-top: 18px; padding: 10px 13px; border-radius: 9px;
+  background: #fef2f2; border: 1px solid #fecaca;
+  color: #b91c1c; font-size: 12.5px; font-weight: 500; line-height: 1.5;
+}
+
+/* Discord OAuth button — brand blurple */
+.auth .discordBtn {
+  width: 100%; height: 44px; margin-top: 24px;
+  border: none; border-radius: 10px; cursor: pointer;
+  background: #5865f2; color: #fff;
+  font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  box-shadow: 0 8px 22px rgba(88, 101, 242, .32);
+  transition: .15s ease;
+}
+.auth .discordBtn:hover { background: #4752c4; transform: translateY(-1px); box-shadow: 0 10px 26px rgba(88, 101, 242, .4); }
+.auth .discordBtn:active { transform: translateY(0); }
+.auth .discordBtn:focus-visible { outline: 2px solid #6c4bf4; outline-offset: 3px; }
+
+.auth .authLegal {
+  font-size: 11px; color: #8a8fa3; text-align: center;
+  margin-top: 15px; line-height: 1.55;
+}
+
+/* small reassurance list under the button */
+.auth .authTicks {
+  list-style: none; margin: 20px 0 0; padding: 17px 0 0;
+  border-top: 1px solid #eceef4;
+  display: grid; gap: 8px;
+}
+.auth .authTicks li {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: #5a6178; font-weight: 500;
+}
+.auth .authTicks svg { color: #16a34a; flex-shrink: 0; }
+
+/* ---------- right — product preview ---------- */
+.auth .authRight {
+  display: grid; place-items: center;
+  padding: clamp(22px, 3vw, 36px);
+  background:
+    radial-gradient(55% 45% at 80% 8%, rgba(108, 75, 244, .11), transparent 60%),
+    radial-gradient(40% 40% at 10% 95%, rgba(90, 120, 255, .08), transparent 60%),
+    linear-gradient(180deg, #f3f4fb, #f8f9fd);
+  border-left: 1px solid #eceef4;
+}
+
+/* floating dashboard preview frame */
+.auth .demoFrame {
+  width: 100%; max-width: 420px;
+  background: #fff; border: 1px solid #e6e8f2; border-radius: 13px;
+  box-shadow: 0 20px 55px rgba(20, 24, 48, .13), 0 4px 12px rgba(20, 24, 48, .05);
+  overflow: hidden;
+}
+.auth .demoBar {
+  height: 32px; display: flex; align-items: center; gap: 6px;
+  padding: 0 12px; border-bottom: 1px solid #eceef4; background: #fbfbfd;
+}
+.auth .demoBar i { width: 8px; height: 8px; border-radius: 50%; background: #dfe2ee; }
+.auth .demoBar i:first-child { background: #ff5f57; }
+.auth .demoBar i:nth-child(2) { background: #febc2e; }
+.auth .demoBar i:nth-child(3) { background: #28c840; }
+.auth .demoUrl {
+  margin-left: 8px; font-size: 9px; color: #8a8fa3; font-weight: 500;
+  background: #f4f5fa; border: 1px solid #eceef4; border-radius: 6px;
+  padding: 3px 9px;
+}
+.auth .demoBody { display: grid; grid-template-columns: 104px 1fr; min-height: 270px; }
+.auth .demoSide {
+  background: #f7f8fc; border-right: 1px solid #eceef4;
+  padding: 11px 8px; display: flex; flex-direction: column; gap: 2px;
+}
+.auth .demoLogo {
+  width: 22px; height: 22px; margin-bottom: 9px;
+}
+.auth .demoNav {
+  font-size: 9.5px; font-weight: 600; color: #8a8fa3;
+  padding: 5px 8px; border-radius: 6px;
+}
+.auth .demoNav.on { background: #fff; color: #0d1120; box-shadow: 0 1px 3px rgba(20, 24, 48, .07); }
+.auth .demoMain { padding: 13px; display: flex; flex-direction: column; gap: 8px; }
+.auth .demoHead {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;
+}
+.auth .demoHead b { font-size: 12.5px; font-weight: 800; letter-spacing: -.01em; color: #0d1120; display: block; }
+.auth .demoHead small { font-size: 8.5px; color: #8a8fa3; }
+.auth .demoPill {
+  font-size: 8.5px; font-weight: 700; color: #12834a;
+  background: rgba(22, 163, 74, .09); border: 1px solid rgba(22, 163, 74, .2);
+  border-radius: 999px; padding: 3px 8px;
+}
+.auth .demoChart {
+  margin-top: auto; display: flex; align-items: flex-end; gap: 6px;
+  height: 48px; padding-top: 8px; border-top: 1px solid #eceef4;
+}
+.auth .demoChart i {
+  flex: 1; border-radius: 3px 3px 1px 1px;
+  background: linear-gradient(180deg, #7a5cff, #4f8cff); opacity: .85;
+}
+
+/* module rows inside the preview */
+.auth .authMod {
+  display: flex; align-items: center; gap: 10px;
+  background: #f7f8fc; border: 1px solid #eceef4;
+  border-radius: 9px; padding: 8px 11px;
+}
+.auth .authMod b { font-size: 11.5px; font-weight: 600; color: #0d1120; }
+.auth .authMod small { font-size: 9px; color: #8a8fa3; display: block; }
+.auth .authMod > div { flex: 1; min-width: 0; }
+.auth .authMod .mIcon {
+  width: 25px; height: 25px; border-radius: 8px; flex-shrink: 0;
+  display: grid; place-items: center;
+  background: rgba(108, 75, 244, .1); color: #6c4bf4;
+}
+/* tiny toggle */
+.auth .authSw {
+  width: 27px; height: 15px; border-radius: 999px; flex-shrink: 0;
+  background: #22c55e; position: relative;
+}
+.auth .authSw::after {
+  content: ""; position: absolute; top: 2px; right: 2px;
+  width: 11px; height: 11px; border-radius: 50%; background: #fff;
+}
+.auth .authSw.off { background: #d8dcea; }
+.auth .authSw.off::after { right: auto; left: 2px; }
+
+/* ---------- under-card meta ---------- */
+.auth .authMeta {
+  margin-top: 14px; padding: 0 4px;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  font-size: 11.5px; color: #8a8fa3;
+}
+.auth .authMeta a { color: #5a6178; font-weight: 600; }
+.auth .authMeta a:hover { color: #6c4bf4; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 860px) {
+  .auth .authCard { grid-template-columns: 1fr; }
+  .auth .authRight { display: none; }
+}

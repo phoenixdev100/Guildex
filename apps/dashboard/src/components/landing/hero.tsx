@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import {
     ArrowRight,
-    Bot,
     Check,
     ChevronDown,
     Database,
@@ -80,12 +79,12 @@ function ProductFrame() {
         <div className="frame">
             <div className="frameBar">
                 <span className="fdot r" /><span className="fdot y" /><span className="fdot g" />
-                <span className="frameUrl"><Lock size={9} /> masterbot.local/dashboard</span>
+                <span className="frameUrl"><Lock size={9} /> guildex.local/dashboard</span>
             </div>
 
             <div className="frameBody">
                 <aside className="fside">
-                    <div className="fsideLogo"><i><Bot size={12} /></i> MasterBot</div>
+                    <div className="fsideLogo"><img className="logoFill" src="/logo.png" alt="" /> Guildex</div>
                     {SIDEBAR.map(([name, Icon], i) => (
                         <div className={`fItem ${i === 0 ? 'on' : ''}`} key={name}>
                             <Icon size={12} /> {name}
