@@ -37,6 +37,9 @@ const envSchema = z.object({
     // Internal API authentication (bot <-> API)
     INTERNAL_API_KEY: z.string().default(''),
 
+    // Direct API→bot calls (instant actions; bot's internal listener)
+    BOT_INTERNAL_URL: z.string().default('http://localhost:4001'),
+
     // Rate Limiting
     RATE_LIMIT_WINDOW_MS: z.string().transform(Number).default('60000'),
     RATE_LIMIT_MAX_REQUESTS: z.string().transform(Number).default('100'),

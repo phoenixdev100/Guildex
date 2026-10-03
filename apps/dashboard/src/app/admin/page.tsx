@@ -9,7 +9,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type MouseEvent } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -67,7 +67,9 @@ export default function AdminPanel() {
     const [modules, setModules] = useState<ModuleRow[]>([]);
     const [activity, setActivity] = useState<ActivityItem[]>([]);
     const [toggling, setToggling] = useState<string | null>(null);
+    const [leaving, setLeaving] = useState<Set<string>>(new Set());
     const [search, setSearch] = useState('');
+    const [statusFilter, setStatusFilter] = useState<'active' | 'left' | 'all'>('active');
 
     useEffect(() => {
         if (status === 'unauthenticated') router.replace('/login');
@@ -96,6 +98,24 @@ export default function AdminPanel() {
     useEffect(() => {
         if (status === 'authenticated') load();
     }, [status, load]);
+
+    /** Queue a LEAVE_GUILD action - bot leaves within ~30s (action poller). */
+    const removeBot = async (e: MouseEvent, g: AdminGuild) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!window.confirm(`Remove the bot from "${g.name}"?\n\nIt will leave the server within ~30 seconds. This only affects the bot - the server's data is kept.`)) return;
+        setLeaving(prev => new Set(prev).add(g.id));
+        try {
+            const res = await fetch(`/api/dashboard/admin/guilds/${g.id}/leave`, { method: 'POST' });
+            if (!res.ok) throw new Error();
+        } catch {
+            setLeaving(prev => {
+                const next = new Set(prev);
+                next.delete(g.id);
+                return next;
+            });
+        }
+    };
 
     const toggleDefault = async (m: ModuleRow) => {
         setToggling(m.id);
@@ -142,7 +162,12 @@ export default function AdminPanel() {
         { label: 'Blacklisted', value: overview.blacklistedUsers, icon: '🚫' },
     ] : [];
 
-    const filteredGuilds = (overview?.guilds ?? []).filter(g => g.name.toLowerCase().includes(search.toLowerCase()));
+    const allGuilds = overview?.guilds ?? [];
+    const activeCount = allGuilds.filter(g => g.isActive).length;
+    const filteredGuilds = allGuilds.filter(g =>
+        g.name.toLowerCase().includes(search.toLowerCase())
+        && (statusFilter === 'all' || (statusFilter === 'active' ? g.isActive : !g.isActive)),
+    );
 
     const tabs: { key: Tab; label: string }[] = [
         { key: 'overview', label: '📊 Overview' },
@@ -195,11 +220,31 @@ export default function AdminPanel() {
 
                 {tab === 'servers' && (
                     <div className="space-y-4">
-                        <input
-                            type="text" placeholder="Search servers…" value={search}
-                            onChange={e => setSearch(e.target.value)}
-                            className="w-full max-w-md bg-secondary/50 border border-border rounded-lg px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
-                        />
+                        <div className="flex flex-wrap items-center gap-3">
+                            <input
+                                type="text" placeholder="Search servers…" value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                className="w-full max-w-md bg-secondary/50 border border-border rounded-lg px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
+                            />
+                            <div className="flex gap-2">
+                                {([
+                                    { key: 'active', label: `Active (${activeCount})` },
+                                    { key: 'left', label: `Left (${allGuilds.length - activeCount})` },
+                                    { key: 'all', label: `All (${allGuilds.length})` },
+                                ] as const).map(f => (
+                                    <button
+                                        key={f.key}
+                                        onClick={() => setStatusFilter(f.key)}
+                                        className={`px-3.5 py-2 rounded-lg text-xs font-semibold border transition-colors ${statusFilter === f.key
+                                            ? 'bg-yellow-500/15 text-yellow-500 border-yellow-500/40'
+                                            : 'text-muted-foreground border-border/50 hover:border-yellow-500/30 hover:text-foreground'
+                                        }`}
+                                    >
+                                        {f.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
                         <div className="glass rounded-xl border border-border/50 overflow-hidden">
                             <div className="divide-y divide-border/30">
                                 {filteredGuilds.map(g => (
@@ -221,6 +266,17 @@ export default function AdminPanel() {
                                                 {g.memberCount} users • {g.enabledModules} modules • joined {new Date(g.joinedAt).toLocaleDateString()} • owner {g.ownerId}
                                             </p>
                                         </div>
+                                        {leaving.has(g.id) ? (
+                                            <span className="text-xs px-2 py-1 rounded-full bg-yellow-500/15 text-yellow-500 border border-yellow-500/30 shrink-0">removal queued</span>
+                                        ) : g.isActive ? (
+                                            <button
+                                                onClick={(e) => removeBot(e, g)}
+                                                className="text-xs px-2.5 py-1 rounded-lg border border-red-500/40 text-red-500 hover:bg-red-500/10 transition-colors shrink-0"
+                                                title="Bot will leave this server"
+                                            >
+                                                Remove bot
+                                            </button>
+                                        ) : null}
                                         <span className="text-muted-foreground">→</span>
                                     </Link>
                                 ))}

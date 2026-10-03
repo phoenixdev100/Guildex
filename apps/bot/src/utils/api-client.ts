@@ -150,6 +150,15 @@ export class APIClient {
     }
 
     /**
+     * Reconcile guild membership on startup - sends the bot's current
+     * guild ids; the API marks any active guild missing from the list
+     * as inactive (covers kicks/deletions while the bot was offline).
+     */
+    async reconcileGuilds(ids: string[]): Promise<void> {
+        await this.post(`/api/guilds/reconcile`, { ids });
+    }
+
+    /**
      * Check if a module is enabled for a guild
      */
     async isModuleEnabled(guildId: string, moduleName: string): Promise<boolean> {

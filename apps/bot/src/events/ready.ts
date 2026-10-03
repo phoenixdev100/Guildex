@@ -64,6 +64,15 @@ export async function handleReady(client: BotClient): Promise<void> {
                 logger.error({ error, guildId: guild.id }, `failed to sync guild ${guild.name}`);
             }
         }
+
+        // Reconcile: mark guilds the bot is no longer in as inactive
+        // (covers kicks/server deletions that happened while offline)
+        try {
+            await apiClient.reconcileGuilds([...client.guilds.cache.keys()]);
+            logger.info('✅ Reconciled guild membership');
+        } catch (error) {
+            logger.warn({ error }, 'Failed to reconcile guilds');
+        }
     } else {
         logger.warn('⚠️  API connection failed - some features may not work');
     }

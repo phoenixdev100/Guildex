@@ -797,3 +797,17 @@ model ApplicationBlacklist {
   @@unique([guildId, userId])
   @@map("application_blacklist")
 }
+
+model BotAction {
+  id          String    @id @default(cuid())
+  type        String    // LEAVE_GUILD - extensible queue for future bot-side jobs
+  guildId     String
+  status      String    @default("pending") // pending | completed | failed
+  requestedBy String?   // discord id of whoever queued it
+  error       String?
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([status, createdAt])
+  @@map("bot_actions")
+}

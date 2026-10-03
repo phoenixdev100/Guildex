@@ -91,6 +91,65 @@ export async function dashboardRoutes(app: FastifyInstance): Promise<void> {
     });
 
     /**
+     * POST /api/dashboard/admin/guilds/:guildId/leave
+     * Queue a LEAVE_GUILD action - the bot's action poller picks it up
+     * within ~30s and calls guild.leave(). Super admin only; server
+     * owners/admins cannot use this (they kick manually in Discord).
+     */
+    app.post('/admin/guilds/:guildId/leave', async (request, reply) => {
+        if (!isSuperAdminRequest(request)) {
+            return reply.status(403).send({ error: 'Forbidden' });
+        }
+        const { guildId } = request.params as { guildId: string };
+        try {
+            const guild = await prisma.guild.findUnique({
+                where: { id: guildId },
+                select: { isActive: true },
+            });
+            if (!guild || !guild.isActive) {
+                return reply.status(404).send({ error: 'Guild not found or bot already left' });
+            }
+
+            // Fast path: ask the bot's internal listener to leave now.
+            // Falls back to the polled action queue when the bot is unreachable.
+            try {
+                const res = await fetch(`${env.BOT_INTERNAL_URL}/internal/guilds/${guildId}/leave`, {
+                    method: 'POST',
+                    headers: { 'x-api-key': env.INTERNAL_API_KEY },
+                    signal: AbortSignal.timeout(3000),
+                });
+                if (res.ok) {
+                    const body = await res.json().catch(() => ({})) as { already?: boolean };
+                    if (!body.already) {
+                        request.log.info({ guildId }, 'Bot left guild instantly');
+                    }
+                    return { success: true, instant: true };
+                }
+            } catch {
+                // Bot listener unreachable - fall through to the queue.
+            }
+
+            const existing = await prisma.botAction.findFirst({
+                where: { guildId, type: 'LEAVE_GUILD', status: 'pending' },
+                select: { id: true },
+            });
+            if (existing) return { success: true, queued: true, id: existing.id };
+
+            const action = await prisma.botAction.create({
+                data: {
+                    type: 'LEAVE_GUILD',
+                    guildId,
+                    requestedBy: discordUserId(request),
+                },
+            });
+            return { success: true, queued: true, id: action.id };
+        } catch (error) {
+            request.log.error(error);
+            return reply.status(500).send({ error: 'Failed to queue guild leave' });
+        }
+    });
+
+    /**
      * GET /api/dashboard/stats
      * Get overall dashboard statistics
      */
