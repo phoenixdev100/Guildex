@@ -22,6 +22,7 @@ import { economyRoutes } from './routes/economy';
 import { levelingRoutes } from './routes/leveling';
 import { remindersRoutes } from './routes/reminders';
 import { dashboardRoutes } from './routes/dashboard';
+import { botActionRoutes } from './routes/bot-actions';
 import { featureRoutes } from './routes/features';
 import { analyticsRoutes } from './routes/analytics';
 import { applicationRoutes } from './routes/applications';
@@ -67,6 +68,7 @@ async function main() {
         await app.register(featureRoutes, { prefix: '/api' });
         await app.register(analyticsRoutes, { prefix: '/api' });
         await app.register(applicationRoutes, { prefix: '/api' });
+        await app.register(botActionRoutes, { prefix: '/api/bot-actions' });
 
         // Start server
         await app.listen({

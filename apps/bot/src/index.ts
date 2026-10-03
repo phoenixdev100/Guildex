@@ -11,6 +11,7 @@ import logger from './config/logger';
 import { loadEvents } from './utils/event-loader';
 import { loadCommands } from './utils/command-loader';
 import { startReminderPoller, stopReminderPoller } from './services/reminder-poller';
+import { startActionPoller, stopActionPoller } from './services/action-poller';
 import { startAnalyticsFlusher, flushAnalytics } from './utils/analytics';
 
 async function main(): Promise<BotClient> {
@@ -48,6 +49,9 @@ async function main(): Promise<BotClient> {
 
             // Start the reminder delivery poller
             startReminderPoller(client);
+
+            // Start the bot-action queue poller (leave-guild etc.)
+            startActionPoller(client);
 
             // Start batched analytics flushing (30s interval)
             startAnalyticsFlusher();
@@ -99,6 +103,7 @@ async function shutdown(signal: string, client?: BotClient) {
 
     try {
         stopReminderPoller();
+        stopActionPoller();
         await flushAnalytics().catch(() => {});
         client?.destroy();
         logger.info('👋 Shutdown complete');

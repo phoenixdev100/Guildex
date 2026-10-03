@@ -9,7 +9,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type MouseEvent } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -67,6 +67,7 @@ export default function AdminPanel() {
     const [modules, setModules] = useState<ModuleRow[]>([]);
     const [activity, setActivity] = useState<ActivityItem[]>([]);
     const [toggling, setToggling] = useState<string | null>(null);
+    const [leaving, setLeaving] = useState<Set<string>>(new Set());
     const [search, setSearch] = useState('');
 
     useEffect(() => {
@@ -96,6 +97,24 @@ export default function AdminPanel() {
     useEffect(() => {
         if (status === 'authenticated') load();
     }, [status, load]);
+
+    /** Queue a LEAVE_GUILD action - bot leaves within ~30s (action poller). */
+    const removeBot = async (e: MouseEvent, g: AdminGuild) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!window.confirm(`Remove the bot from "${g.name}"?\n\nIt will leave the server within ~30 seconds. This only affects the bot - the server's data is kept.`)) return;
+        setLeaving(prev => new Set(prev).add(g.id));
+        try {
+            const res = await fetch(`/api/dashboard/admin/guilds/${g.id}/leave`, { method: 'POST' });
+            if (!res.ok) throw new Error();
+        } catch {
+            setLeaving(prev => {
+                const next = new Set(prev);
+                next.delete(g.id);
+                return next;
+            });
+        }
+    };
 
     const toggleDefault = async (m: ModuleRow) => {
         setToggling(m.id);
@@ -221,6 +240,17 @@ export default function AdminPanel() {
                                                 {g.memberCount} users • {g.enabledModules} modules • joined {new Date(g.joinedAt).toLocaleDateString()} • owner {g.ownerId}
                                             </p>
                                         </div>
+                                        {leaving.has(g.id) ? (
+                                            <span className="text-xs px-2 py-1 rounded-full bg-yellow-500/15 text-yellow-500 border border-yellow-500/30 shrink-0">removal queued</span>
+                                        ) : g.isActive ? (
+                                            <button
+                                                onClick={(e) => removeBot(e, g)}
+                                                className="text-xs px-2.5 py-1 rounded-lg border border-red-500/40 text-red-500 hover:bg-red-500/10 transition-colors shrink-0"
+                                                title="Bot will leave this server"
+                                            >
+                                                Remove bot
+                                            </button>
+                                        ) : null}
                                         <span className="text-muted-foreground">→</span>
                                     </Link>
                                 ))}
