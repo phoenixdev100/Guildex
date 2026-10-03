@@ -74,6 +74,7 @@ services:
       REDIS_URL: redis://redis:6379
       API_HOST: 0.0.0.0 # bind all interfaces or other containers can't reach it
       API_URL: http://api:4000
+      BOT_INTERNAL_URL: http://bot:4001 # direct API→bot calls (instant guild leave)
     ports:
       - "4000:4000"
     healthcheck:
@@ -100,9 +101,11 @@ services:
     environment:
       NODE_ENV: production
       API_URL: http://api:4000
+      BOT_INTERNAL_PORT: "4001"
+    expose:
+      - "4001" # internal listener - api only, never published to host
     healthcheck:
-      # No port exposed - check the gateway process is alive.
-      test: ["CMD-SHELL", "pgrep node >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4001/internal/health >/dev/null || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
