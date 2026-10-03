@@ -110,6 +110,25 @@ export async function dashboardRoutes(app: FastifyInstance): Promise<void> {
                 return reply.status(404).send({ error: 'Guild not found or bot already left' });
             }
 
+            // Fast path: ask the bot's internal listener to leave now.
+            // Falls back to the polled action queue when the bot is unreachable.
+            try {
+                const res = await fetch(`${env.BOT_INTERNAL_URL}/internal/guilds/${guildId}/leave`, {
+                    method: 'POST',
+                    headers: { 'x-api-key': env.INTERNAL_API_KEY },
+                    signal: AbortSignal.timeout(3000),
+                });
+                if (res.ok) {
+                    const body = await res.json().catch(() => ({})) as { already?: boolean };
+                    if (!body.already) {
+                        request.log.info({ guildId }, 'Bot left guild instantly');
+                    }
+                    return { success: true, instant: true };
+                }
+            } catch {
+                // Bot listener unreachable - fall through to the queue.
+            }
+
             const existing = await prisma.botAction.findFirst({
                 where: { guildId, type: 'LEAVE_GUILD', status: 'pending' },
                 select: { id: true },

@@ -12,6 +12,7 @@ import { loadEvents } from './utils/event-loader';
 import { loadCommands } from './utils/command-loader';
 import { startReminderPoller, stopReminderPoller } from './services/reminder-poller';
 import { startActionPoller, stopActionPoller } from './services/action-poller';
+import { startInternalServer } from './services/internal-server';
 import { startAnalyticsFlusher, flushAnalytics } from './utils/analytics';
 
 async function main(): Promise<BotClient> {
@@ -52,6 +53,9 @@ async function main(): Promise<BotClient> {
 
             // Start the bot-action queue poller (leave-guild etc.)
             startActionPoller(client);
+
+            // Start the internal listener for instant API→bot calls
+            startInternalServer(client);
 
             // Start batched analytics flushing (30s interval)
             startAnalyticsFlusher();

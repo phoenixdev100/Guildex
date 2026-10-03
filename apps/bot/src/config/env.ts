@@ -18,6 +18,9 @@ const envSchema = z.object({
     API_URL: z.string().default('http://localhost:4000'),
     INTERNAL_API_KEY: z.string().default(''),
 
+    // Internal listener for direct API→bot calls (instant actions)
+    BOT_INTERNAL_PORT: z.string().transform(Number).default('4001'),
+
     // Logging
     LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
 

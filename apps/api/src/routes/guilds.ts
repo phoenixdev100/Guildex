@@ -103,6 +103,38 @@ export async function guildRoutes(app: FastifyInstance): Promise<void> {
     });
 
     /**
+     * POST /api/guilds/reconcile
+     * Internal only - called by the bot on startup with its current
+     * guild ids. Any guild still marked active but missing from the
+     * list (kicked or deleted while the bot was offline) is marked
+     * inactive so it drops out of select-server/admin views.
+     */
+    app.post('/reconcile', async (request, reply) => {
+        if (request.isInternal !== true) {
+            return reply.status(403).send({ error: 'Internal only' });
+        }
+
+        const parsed = z.object({ ids: z.array(z.string()).max(2000) }).safeParse(request.body);
+        if (!parsed.success) {
+            return reply.status(400).send({ error: 'Invalid body' });
+        }
+
+        try {
+            const stale = await prisma.guild.updateMany({
+                where: { isActive: true, id: { notIn: parsed.data.ids } },
+                data: { isActive: false, leftAt: new Date() },
+            });
+            if (stale.count > 0) {
+                request.log.info({ stale: stale.count }, 'Reconciled stale guilds');
+            }
+            return { success: true, deactivated: stale.count };
+        } catch (error) {
+            request.log.error(error);
+            return reply.status(500).send({ error: 'Failed to reconcile guilds' });
+        }
+    });
+
+    /**
      * DELETE /api/guilds/:guildId/unregister
      * Mark a guild as inactive (bot left the server)
      */

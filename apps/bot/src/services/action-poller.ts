@@ -31,12 +31,17 @@ async function executeAction(client: BotClient, action: PendingAction): Promise<
                 ?? await client.guilds.fetch(action.guildId).catch(() => null);
 
             if (!guild) {
-                // Bot is not in the guild - the goal is already met.
+                // Bot is not in the guild - the goal is already met, but the
+                // DB row may still be marked active (bot left while offline
+                // or was kicked manually). Unregister before completing.
+                await apiClient.unregisterGuild(action.guildId).catch(() => undefined);
                 await apiClient.post(`/bot-actions/${action.id}/complete`, { status: 'completed' });
                 return;
             }
 
             await guild.leave();
+            // Belt & suspenders alongside the guildDelete → unregister path.
+            await apiClient.unregisterGuild(action.guildId).catch(() => undefined);
             await apiClient.post(`/bot-actions/${action.id}/complete`, { status: 'completed' });
             logger.info(`🚪 Left guild ${guild.name} (${guild.id}) via admin action`);
             return;
