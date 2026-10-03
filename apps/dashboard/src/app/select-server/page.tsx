@@ -13,13 +13,14 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
+    ArrowRight,
     ChevronDown,
     Crown,
     LogOut,
     Pin,
+    Plus,
     Puzzle,
     RotateCw,
-    Search,
     ServerCrash,
     Users,
 } from 'lucide-react';
@@ -33,7 +34,10 @@ interface Server {
     memberCount: number;
     enabledModules: number;
     totalModules: number;
+    isActive?: boolean;
 }
+
+type SortMode = 'default' | 'name' | 'members';
 
 const PIN_KEY = 'guildex:pinned-servers';
 
@@ -47,6 +51,7 @@ export default function SelectServerPage() {
     const [search, setSearch] = useState('');
     const [applied, setApplied] = useState('');
     const [searching, setSearching] = useState(false);
+    const [sort, setSort] = useState<SortMode>('default');
     const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -132,9 +137,22 @@ export default function SelectServerPage() {
         );
     }
 
+    const myId = (session?.user as { id?: string } | undefined)?.id;
+
     const filtered = servers
         .filter(s => s.name.toLowerCase().includes(applied.toLowerCase()))
-        .sort((a, b) => Number(pinned.has(b.id)) - Number(pinned.has(a.id)));
+        .sort((a, b) => {
+            const pinDiff = Number(pinned.has(b.id)) - Number(pinned.has(a.id));
+            if (pinDiff !== 0) return pinDiff;
+            if (sort === 'name') return a.name.localeCompare(b.name);
+            if (sort === 'members') return b.memberCount - a.memberCount;
+            return 0;
+        });
+
+    const inviteBot = () => window.open(
+        'https://discord.com/oauth2/authorize?client_id=' + process.env.DISCORD_CLIENT_ID + '&scope=bot&permissions=8',
+        '_blank',
+    );
 
     return (
         <div className="sel">
@@ -211,12 +229,32 @@ export default function SelectServerPage() {
                                 <RotateCw size={12} />
                             </button>
                         )}
+                        <span className="selSortLbl">Sort:</span>
+                        <div className="selSort">
+                            {([['default', 'Pinned'], ['name', 'A–Z'], ['members', 'Members']] as [SortMode, string][]).map(([mode, label]) => (
+                                <button
+                                    key={mode}
+                                    className={`sortChip ${sort === mode ? 'on' : ''}`}
+                                    onClick={() => setSort(mode)}
+                                >
+                                    {label}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 )}
 
                 {/* server grid */}
                 {loading || searching ? (
-                    <div className="selLoader"><div className="spin" /></div>
+                    <div className="selGrid">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                            <div key={i} className="skel">
+                                <div className="skelBanner" />
+                                <div className="skelLine w70" />
+                                <div className="skelLine w50" />
+                            </div>
+                        ))}
+                    </div>
                 ) : filtered.length > 0 ? (
                     <div className="selGrid">
                         {filtered.map(server => (
@@ -226,6 +264,9 @@ export default function SelectServerPage() {
                                 className="srv"
                             >
                                 <div className="srvBanner">
+                                    <span className={`roleChip ${server.ownerId === myId ? 'own' : 'adm'}`}>
+                                        {server.ownerId === myId ? 'Owner' : 'Admin'}
+                                    </span>
                                     <button
                                         className={`pin ${pinned.has(server.id) ? 'on' : ''}`}
                                         onClick={(e) => togglePin(e, server.id)}
@@ -243,12 +284,24 @@ export default function SelectServerPage() {
                                 </div>
                                 <b className="srvName">{server.name}</b>
                                 <span className="srvMeta">
+                                    <i className={`dot ${server.isActive !== false ? 'on' : ''}`} />
+                                    {server.isActive !== false ? 'Bot active' : 'Bot not added'}
+                                </span>
+                                <span className="srvMeta">
                                     <Users size={11} /> {server.memberCount.toLocaleString()} members
                                     <i>·</i>
                                     <Puzzle size={11} /> {server.enabledModules}/{server.totalModules} modules
                                 </span>
+                                <span className="srvGo">
+                                    <span className="srvGoBtn">Manage <ArrowRight size={12} /></span>
+                                </span>
                             </Link>
                         ))}
+                        <button type="button" className="addCard" onClick={inviteBot}>
+                            <span className="addMark"><Plus size={18} /></span>
+                            <b>Add to a server</b>
+                            <small>Invite Guildex to another community</small>
+                        </button>
                     </div>
                 ) : (
                     <div className="selEmpty">
