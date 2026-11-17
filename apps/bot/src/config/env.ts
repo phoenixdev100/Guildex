@@ -19,7 +19,7 @@ const envSchema = z.object({
     INTERNAL_API_KEY: z.string().default(''),
 
     // Internal listener for direct API→bot calls (instant actions)
-    BOT_INTERNAL_PORT: z.string().transform(Number).default('4001'),
+    BOT_INTERNAL_PORT: z.string().transform(Number).default(4001),
 
     // Logging
     LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
@@ -47,7 +47,7 @@ function validateEnv(): Env {
         return parsed;
     } catch (error) {
         if (error instanceof z.ZodError) {
-            const missing = error.errors.map((err) => err.path.join('.')).join(', ');
+            const missing = error.issues.map((err) => err.path.join('.')).join(', ');
             console.warn(`Warning: Missing or invalid environment variables: ${missing}`);
             // Return defaults in development
             return envSchema.parse({});
@@ -61,4 +61,3 @@ export const env = validateEnv();
 export const isDevelopment = env.NODE_ENV === 'development';
 export const isProduction = env.NODE_ENV === 'production';
 export const isTest = env.NODE_ENV === 'test';
-

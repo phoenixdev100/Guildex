@@ -11,7 +11,7 @@ const envSchema = z.object({
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 
     // Server Configuration
-    API_PORT: z.string().transform(Number).default('4000'),
+    API_PORT: z.string().transform(Number).default(4000),
     API_HOST: z.string().default('localhost'),
     API_URL: z.string().default('http://localhost:4000'),
 
@@ -41,8 +41,8 @@ const envSchema = z.object({
     BOT_INTERNAL_URL: z.string().default('http://localhost:4001'),
 
     // Rate Limiting
-    RATE_LIMIT_WINDOW_MS: z.string().transform(Number).default('60000'),
-    RATE_LIMIT_MAX_REQUESTS: z.string().transform(Number).default('100'),
+    RATE_LIMIT_WINDOW_MS: z.string().transform(Number).default(60000),
+    RATE_LIMIT_MAX_REQUESTS: z.string().transform(Number).default(100),
 
     // Logging
     LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
@@ -66,7 +66,7 @@ function validateEnv(): Env {
         return parsed;
     } catch (error) {
         if (error instanceof z.ZodError) {
-            const missing = error.errors.map((err) => err.path.join('.')).join(', ');
+            const missing = error.issues.map((err) => err.path.join('.')).join(', ');
             console.warn(`Warning: Missing or invalid environment variables: ${missing}`);
             // Return defaults in development
             return envSchema.parse({});
