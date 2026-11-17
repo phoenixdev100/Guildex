@@ -1,5 +1,5 @@
 /* ============================================================
-   Select Server — same light enterprise language as .site/.auth
+   Select Server - same light enterprise language as .site/.auth
    Scoped to .sel so globals.css dark theme can't leak in.
    ============================================================ */
 
@@ -13,7 +13,7 @@
   display: flex; flex-direction: column;
 }
 
-/* ---------- top bar — sticky like the landing nav ---------- */
+/* ---------- top bar - sticky like the landing nav ---------- */
 .sel .selTop {
   position: sticky; top: 0; z-index: 50;
   display: flex; align-items: center; justify-content: space-between;
@@ -127,7 +127,7 @@
 }
 .sel .selClear:hover { color: #6c4bf4; border-color: rgba(108, 75, 244, .4); }
 
-/* ---------- server grid — 5 per row, any count auto-centers ---------- */
+/* ---------- server grid - 5 per row, any count auto-centers ---------- */
 .sel .selGrid {
   width: 100%; max-width: 1080px;
   display: flex; flex-wrap: wrap; justify-content: center;
@@ -214,7 +214,7 @@
 .sel .roleChip.own { color: #8a5c10; border: 1px solid rgba(217,160,33,.5); }
 .sel .roleChip.adm { color: #5a3de0; border: 1px solid rgba(108,75,244,.35); }
 
-/* hover overlay — card content blurs, centered Manage button appears */
+/* hover overlay - card content blurs, centered Manage button appears */
 .sel .srvGo {
   position: absolute; inset: 0; z-index: 3;
   display: flex; align-items: center; justify-content: center;

@@ -1,7 +1,7 @@
 /**
  * Login Page
  *
- * Discord OAuth2 sign-in — one centered card: form left, product preview right.
+ * Discord OAuth2 sign-in - one centered card: form left, product preview right.
  * Same light enterprise design language as the landing page.
  */
 
@@ -39,7 +39,7 @@ function LoginForm() {
         <div className="auth">
             <div className="authCol">
                 <div className="authCard">
-                    {/* left — sign-in */}
+                    {/* left - sign-in */}
                     <div className="authLeft">
                         <Link href="/" className="authBrand">
                             <span className="authLogo"><img className="logoFill" src="/logo.png" alt="Guildex" /></span>
@@ -55,7 +55,7 @@ function LoginForm() {
                             {error && (
                                 <div className="authErr">
                                     {error === 'OAuthCallback'
-                                        ? 'Authentication failed — the Discord sign-in was interrupted. Please try again.'
+                                        ? 'Authentication failed - the Discord sign-in was interrupted. Please try again.'
                                         : 'Something went wrong during sign in. Please try again.'}
                                 </div>
                             )}
@@ -69,18 +69,18 @@ function LoginForm() {
                             </button>
 
                             <p className="authLegal">
-                                We only see the servers you administer — nothing else.
+                                We only see the servers you administer - nothing else.
                             </p>
 
                             <ul className="authTicks">
                                 <li><Check size={13} /> Per-guild access control built in</li>
                                 <li><Check size={13} /> Your data stays on your infrastructure</li>
-                                <li><Check size={13} /> Open source — no account, no fees</li>
+                                <li><Check size={13} /> Open source - no account, no fees</li>
                             </ul>
                         </div>
                     </div>
 
-                    {/* right — product preview */}
+                    {/* right - product preview */}
                     <div className="authRight">
                         <div className="demoFrame">
                             <div className="demoBar">
