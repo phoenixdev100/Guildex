@@ -27,6 +27,8 @@ import {
     Server,
     Shield,
     Users,
+    LayoutList,
+    LayoutGrid,
 } from 'lucide-react';
 import './admin.css';
 
@@ -71,14 +73,20 @@ interface ActivityItem {
     icon: string;
 }
 
-type Tab = 'overview' | 'servers' | 'modules' | 'activity';
+type Tab = 'overview' | 'servers' | 'modules';
 
 export default function AdminPanel() {
     const { status } = useSession();
     const router = useRouter();
 
     const [authorized, setAuthorized] = useState<boolean | null>(null);
-    const [tab, setTab] = useState<Tab>('overview');
+    const [dataLoading, setDataLoading] = useState(true);
+    const [tab, setTabState] = useState<Tab>(() =>
+        (typeof window !== 'undefined' && (localStorage.getItem('guildex:admin-tab') as Tab)) || 'overview');
+    const setTab = (t: Tab) => {
+        setTabState(t);
+        try { localStorage.setItem('guildex:admin-tab', t); } catch { /* ignore */ }
+    };
     const [overview, setOverview] = useState<Overview | null>(null);
     const [modules, setModules] = useState<ModuleRow[]>([]);
     const [activity, setActivity] = useState<ActivityItem[]>([]);
@@ -86,6 +94,35 @@ export default function AdminPanel() {
     const [leaving, setLeaving] = useState<Set<string>>(new Set());
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState<'active' | 'left' | 'all'>('active');
+    const [serverView, setServerView] = useState<'list' | 'grid'>(() =>
+        typeof window !== 'undefined' && localStorage.getItem('guildex:admin-server-view') === 'grid' ? 'grid' : 'list');
+    const [moduleView, setModuleView] = useState<'list' | 'grid'>(() =>
+        typeof window !== 'undefined' && localStorage.getItem('guildex:admin-module-view') === 'list' ? 'list' : 'grid');
+    const [historyFor, setHistoryFor] = useState<string | null>(null);
+    const [historyData, setHistoryData] = useState<Record<string, { events: { id: string; icon: string; action: string; detail: string; time: string }[]; loading?: boolean }>>({});
+
+    const toggleHistory = async (guildId: string) => {
+        if (historyFor === guildId) { setHistoryFor(null); return; }
+        setHistoryFor(guildId);
+        if (historyData[guildId]?.events) return;
+        setHistoryData(prev => ({ ...prev, [guildId]: { events: [], loading: true } }));
+        try {
+            const res = await fetch(`/api/dashboard/admin/guilds/${guildId}/history`);
+            const data = res.ok ? await res.json() : { events: [] };
+            setHistoryData(prev => ({ ...prev, [guildId]: { events: data.events ?? [] } }));
+        } catch {
+            setHistoryData(prev => ({ ...prev, [guildId]: { events: [] } }));
+        }
+    };
+
+    const setServerViewPersist = (v: 'list' | 'grid') => {
+        setServerView(v);
+        try { localStorage.setItem('guildex:admin-server-view', v); } catch { /* ignore */ }
+    };
+    const setModuleViewPersist = (v: 'list' | 'grid') => {
+        setModuleView(v);
+        try { localStorage.setItem('guildex:admin-module-view', v); } catch { /* ignore */ }
+    };
 
     useEffect(() => {
         if (status === 'unauthenticated') router.replace('/login');
@@ -108,6 +145,8 @@ export default function AdminPanel() {
             if (actRes.ok) setActivity(await actRes.json());
         } catch {
             setAuthorized(false);
+        } finally {
+            setDataLoading(false);
         }
     }, []);
 
@@ -149,9 +188,9 @@ export default function AdminPanel() {
         }
     };
 
-    if (status === 'loading' || authorized === null) {
+    if (status === 'loading' || authorized === null || (authorized && dataLoading)) {
         return (
-            <div className="admLoader">
+            <div className="adm admLoader">
                 <div className="spin" />
             </div>
         );
@@ -191,7 +230,6 @@ export default function AdminPanel() {
         { key: 'overview', label: 'Overview', icon: <BarChart3 size={13} /> },
         { key: 'servers', label: 'Servers', count: overview?.totalGuilds, icon: <Server size={13} /> },
         { key: 'modules', label: 'Modules', count: modules.length, icon: <Puzzle size={13} /> },
-        { key: 'activity', label: 'Activity', icon: <FileText size={13} /> },
     ];
 
     const filterButtons: { key: typeof statusFilter; label: string; count: number }[] = [
@@ -217,7 +255,6 @@ export default function AdminPanel() {
             <main className="admMain">
                 {/* head */}
                 <div className="admHead">
-                    <div className="admKicker">Platform</div>
                     <h1>Admin Panel</h1>
                     <p>Global controls - servers, module defaults, applications and platform activity.</p>
                 </div>
@@ -234,6 +271,7 @@ export default function AdminPanel() {
 
                 {/* overview */}
                 {tab === 'overview' && (
+                    <>
                     <div className="statGrid">
                         {stats.map(s => (
                             <div key={s.label} className="stat">
@@ -244,119 +282,13 @@ export default function AdminPanel() {
                             </div>
                         ))}
                     </div>
-                )}
-
-                {/* servers */}
-                {tab === 'servers' && (
-                    <>
-                        <div className="admToolbar">
-                            <label className="admSearch">
-                                <Search size={14} />
-                                <input
-                                    type="text" placeholder="Type name or ID"
-                                    value={search} onChange={e => setSearch(e.target.value)}
-                                />
-                            </label>
-                            <div className="admChips">
-                                {filterButtons.map(f => (
-                                    <button key={f.key} onClick={() => setStatusFilter(f.key)} className={`admChip ${statusFilter === f.key ? 'on' : ''}`}>
-                                        {f.label} ({f.count})
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="admCard">
-                            <div className="admRows">
-                                {filteredGuilds.map(g => (
-                                    <Link key={g.id} href={`/dashboard/servers/${g.id}`} className="admRow" style={{ display: 'flex' }}>
-                                        <span className="admAvatar">
-                                            {g.icon ? <img src={g.icon} alt="" /> : g.name.charAt(0).toUpperCase()}
-                                        </span>
-                                        <div className="admRowMain">
-                                            <div className="admRowTitle">
-                                                <b>{g.name}</b>
-                                                <span className={`statusChip ${g.isActive ? 'on' : 'off'}`}>
-                                                    {g.isActive ? 'Active' : 'Left'}
-                                                </span>
-                                            </div>
-                                            <div className="admRowMeta">
-                                                <Users size={11} /> {g.memberCount.toLocaleString()} members
-                                                <i>·</i> {g.enabledModules} modules
-                                                <i>·</i> joined {new Date(g.joinedAt).toLocaleDateString()}
-                                            </div>
-                                        </div>
-                                        <div className="admRowAct">
-                                            {leaving.has(g.id) ? (
-                                                <span className="admQueued">Removal queued</span>
-                                            ) : g.isActive ? (
-                                                <button onClick={(e) => removeBot(e, g)} className="admBtn admBtnDanger">
-                                                    <Ban size={12} /> Remove bot
-                                                </button>
-                                            ) : null}
-                                            <ArrowRight size={15} className="admRowArrow" />
-                                        </div>
-                                    </Link>
-                                ))}
-                                {filteredGuilds.length === 0 && (
-                                    <div className="admEmpty">
-                                        <div className="admEmptyMark"><Server size={20} /></div>
-                                        <p>No servers found</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </>
-                )}
-
-                {/* modules */}
-                {tab === 'modules' && (
-                    <div className="admCard">
-                        <div className="admCardHead">
-                            <div>
-                                <h2>Module defaults</h2>
-                                <p>Default = enabled automatically when the bot joins a new server.</p>
-                            </div>
-                            <Puzzle size={18} style={{ color: 'var(--purple)' }} />
-                        </div>
-                        <div>
-                            {modules.map(m => {
-                                const pct = m.totalGuilds > 0 ? Math.round((m.enabledInGuilds / m.totalGuilds) * 100) : 0;
-                                return (
-                                    <div key={m.id} className="modRow">
-                                        <span className="modIcon"><Puzzle size={16} /></span>
-                                        <div className="modRowMain">
-                                            <div className="modRowTitle">
-                                                <b>{m.name}</b>
-                                                <span className="catChip">{m.category}</span>
-                                            </div>
-                                            <p className="modRowDesc">{m.description}</p>
-                                            <div className="modCoverage">
-                                                <div className="modBar"><i style={{ width: `${pct}%` }} /></div>
-                                                <small>on in {m.enabledInGuilds}/{m.totalGuilds} servers</small>
-                                            </div>
-                                        </div>
-                                        <button
-                                            onClick={() => toggleDefault(m)}
-                                            disabled={toggling === m.id}
-                                            className={`sw ${m.isDefault ? 'on' : ''}`}
-                                            aria-label={`Toggle ${m.name} default`}
-                                        />
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                )}
-
-                {/* activity */}
-                {tab === 'activity' && (
-                    <div className="admCard">
+                    <div className="admCard wide" style={{ marginTop: 18 }}>
                         <div className="admCardHead">
                             <div>
                                 <h2>Recent activity</h2>
                                 <p>Latest actions across all servers.</p>
                             </div>
-                            <FileText size={18} style={{ color: 'var(--purple)' }} />
+                            <FileText size={16} style={{ color: 'var(--purple)' }} />
                         </div>
                         <div>
                             {activity.map(a => (
@@ -377,8 +309,247 @@ export default function AdminPanel() {
                             )}
                         </div>
                     </div>
+                    </>
                 )}
+
+                {/* servers */}
+                {tab === 'servers' && (
+                    <>
+                        <div className="admToolbar">
+                            <div className="admToolbarMid">
+                                <label className="admSearch">
+                                    <Search size={14} />
+                                    <input
+                                        type="text" placeholder="Type name or ID"
+                                        value={search} onChange={e => setSearch(e.target.value)}
+                                    />
+                                </label>
+                                <div className="admChips">
+                                    {filterButtons.map(f => (
+                                        <button key={f.key} onClick={() => setStatusFilter(f.key)} className={`admChip ${statusFilter === f.key ? 'on' : ''}`}>
+                                            {f.label} ({f.count})
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="viewToggle">
+                                <button onClick={() => setServerViewPersist('list')} className={serverView === 'list' ? 'on' : ''} title="List view"><LayoutList size={14} /></button>
+                                <button onClick={() => setServerViewPersist('grid')} className={serverView === 'grid' ? 'on' : ''} title="Grid view"><LayoutGrid size={14} /></button>
+                            </div>
+                        </div>
+                        <div className={`admCard${serverView === 'grid' ? ' flush' : ''}`}>
+                            {serverView === 'list' ? (
+                            <div className="admRows">
+                                {filteredGuilds.map(g => (
+                                    <div key={g.id}>
+                                    <Link href={`/dashboard/servers/${g.id}`} className="admRow" style={{ display: 'flex' }}>
+                                        <span className="admAvatar">
+                                            {g.icon ? <img src={g.icon} alt="" /> : g.name.charAt(0).toUpperCase()}
+                                        </span>
+                                        <div className="admRowMain">
+                                            <div className="admRowTitle">
+                                                <b>{g.name}</b>
+                                                <span className={`statusChip ${g.isActive ? 'on' : 'off'}`}>
+                                                    {g.isActive ? 'Active' : 'Left'}
+                                                </span>
+                                            </div>
+                                            <div className="admRowMeta">
+                                                <Users size={11} /> {g.memberCount.toLocaleString()} members
+                                                <i>·</i> {g.enabledModules} modules
+                                            </div>
+                                        </div>
+                                        <div className="admRowAct">
+                                            <button
+                                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleHistory(g.id); }}
+                                                className={`admBtn admBtnGhost${historyFor === g.id ? ' on' : ''}`}
+                                                title="View guild history"
+                                            >
+                                                <FileText size={12} /> History
+                                            </button>
+                                            {leaving.has(g.id) ? (
+                                                <span className="admQueued">Removal queued</span>
+                                            ) : g.isActive ? (
+                                                <button onClick={(e) => removeBot(e, g)} className="admBtn admBtnDanger">
+                                                    <Ban size={12} /> Remove bot
+                                                </button>
+                                            ) : null}
+                                            <ArrowRight size={15} className="admRowArrow" />
+                                        </div>
+                                    </Link>
+                                    {historyFor === g.id && (
+                                        <div className="histPanel">
+                                            {historyData[g.id]?.loading ? (
+                                                <div className="histLoading"><div className="spin" /></div>
+                                            ) : (historyData[g.id]?.events.length ?? 0) === 0 ? (
+                                                <p className="histEmpty">No history recorded yet.</p>
+                                            ) : (
+                                                historyData[g.id]!.events.map(ev => (
+                                                    <div key={ev.id} className="histRow">
+                                                        <span className="histIcon">{ev.icon}</span>
+                                                        <div className="histMain">
+                                                            <b>{ev.action}</b>
+                                                            {ev.detail && <small>{ev.detail}</small>}
+                                                        </div>
+                                                        <span className="histTime">{new Date(ev.time).toLocaleString()}</span>
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                    )}
+                                    </div>
+                                ))}
+                                {filteredGuilds.length === 0 && (
+                                    <div className="admEmpty">
+                                        <div className="admEmptyMark"><Server size={20} /></div>
+                                        <p>No servers found</p>
+                                    </div>
+                                )}
+                            </div>
+                            ) : (
+                            <div className="srvGrid">
+                                {filteredGuilds.map(g => (
+                                    <Link key={g.id} href={`/dashboard/servers/${g.id}`} className="srvCard">
+                                        <div className="srvCardBanner">
+                                            <span className={`statusChip ${g.isActive ? 'on' : 'off'}`}>
+                                                {g.isActive ? 'Active' : 'Left'}
+                                            </span>
+                                            <span className="srvCardIcon">
+                                                {g.icon ? <img src={g.icon} alt="" /> : g.name.charAt(0).toUpperCase()}
+                                            </span>
+                                        </div>
+                                        <b className="srvCardName">{g.name}</b>
+                                        <span className="srvCardMeta">
+                                            <Users size={11} /> {g.memberCount.toLocaleString()} members
+                                        </span>
+                                        <span className="srvCardMeta">
+                                            <Puzzle size={11} /> {g.enabledModules} modules
+                                        </span>
+                                        <span className="srvGo">
+                                            {leaving.has(g.id) ? (
+                                                <span className="admQueued">Removal queued</span>
+                                            ) : g.isActive ? (
+                                                <button
+                                                    onClick={(e) => { e.preventDefault(); removeBot(e, g); }}
+                                                    className="srvGoBtn danger"
+                                                    title="Remove bot from server"
+                                                >
+                                                    <Ban size={11} /> Remove
+                                                </button>
+                                            ) : (
+                                                <span className="srvGoBtn">Manage <ArrowRight size={11} /></span>
+                                            )}
+                                        </span>
+                                    </Link>
+                                ))}
+                                {filteredGuilds.length === 0 && (
+                                    <div className="admEmpty" style={{ gridColumn: '1 / -1' }}>
+                                        <div className="admEmptyMark"><Server size={20} /></div>
+                                        <p>No servers found</p>
+                                    </div>
+                                )}
+                            </div>
+                            )}
+                        </div>
+                    </>
+                )}
+
+                {/* modules */}
+                {tab === 'modules' && (
+                    <>
+                    <div className="admToolbar">
+                        <div className="admToolbarMid" />
+                        <div className="viewToggle">
+                            <button onClick={() => setModuleViewPersist('list')} className={moduleView === 'list' ? 'on' : ''} title="List view"><LayoutList size={14} /></button>
+                            <button onClick={() => setModuleViewPersist('grid')} className={moduleView === 'grid' ? 'on' : ''} title="Grid view"><LayoutGrid size={14} /></button>
+                        </div>
+                    </div>
+                    <div className={`admCard${moduleView === 'grid' ? ' flush' : ' wide'}`}>
+                        <div className="admCardHead">
+                            <div>
+                                <h2>Module defaults</h2>
+                                <p>Default = enabled automatically when the bot joins a new server.</p>
+                            </div>
+                            <Puzzle size={16} style={{ color: 'var(--purple)' }} />
+                        </div>
+                        {moduleView === 'list' ? (
+                        <div className="admRows">
+                            {modules.map(m => {
+                                const pct = m.totalGuilds > 0 ? Math.round((m.enabledInGuilds / m.totalGuilds) * 100) : 0;
+                                return (
+                                    <div key={m.id} className="admRow">
+                                        <span className="modIcon"><Puzzle size={15} /></span>
+                                        <div className="admRowMain">
+                                            <div className="admRowTitle">
+                                                <b>{m.name}</b>
+                                            </div>
+                                            <div className="admRowMeta">
+                                                {m.description}
+                                                <i>·</i> on in {m.enabledInGuilds}/{m.totalGuilds} servers
+                                            </div>
+                                        </div>
+                                        <span className={`rowCenterChip ${m.isDefault ? 'on' : 'off'}`}>
+                                            {m.isDefault ? 'Default' : 'Off'}
+                                        </span>
+                                        <div className="admRowAct">
+                                            <span className="catChip">{m.category}</span>
+                                            <button
+                                                onClick={() => toggleDefault(m)}
+                                                disabled={toggling === m.id}
+                                                className={`sw ${m.isDefault ? 'on' : ''}`}
+                                                aria-label={`Toggle ${m.name} default`}
+                                            />
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        ) : (
+                        <div className="modGrid">
+                            {modules.map(m => {
+                                const pct = m.totalGuilds > 0 ? Math.round((m.enabledInGuilds / m.totalGuilds) * 100) : 0;
+                                return (
+                                    <div key={m.id} className="modCard">
+                                        <div className="modCardTop">
+                                            <span className="modIcon"><Puzzle size={15} /></span>
+                                            <button
+                                                onClick={() => toggleDefault(m)}
+                                                disabled={toggling === m.id}
+                                                className={`sw ${m.isDefault ? 'on' : ''}`}
+                                                aria-label={`Toggle ${m.name} default`}
+                                            />
+                                        </div>
+                                        <b className="modCardName">{m.name}</b>
+                                        <span className="catChip">{m.category}</span>
+                                        <p className="modCardDesc">{m.description}</p>
+                                        <span className={`modCardState ${m.isDefault ? '' : 'off'}`}>
+                                            {m.isDefault ? 'Default: On' : 'Default: Off'}
+                                        </span>
+                                        <div className="modCoverage">
+                                            <div className="modBar"><i style={{ width: `${pct}%` }} /></div>
+                                            <small>{m.enabledInGuilds}/{m.totalGuilds}</small>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        )}
+                    </div>
+                    </>
+                )}
+
             </main>
+
+            {/* footer */}
+            <footer className="admFoot">
+                <div className="admFootInner">
+                    <span className="admFootBrand">
+                        <img src="/logo.png" alt="Guildex" />
+                        Guildex
+                    </span>
+                    <span className="admFootText">Admin Panel • Bot owner controls</span>
+                    <span className="admFootCopy">© {new Date().getFullYear()} Guildex. All rights reserved.</span>
+                </div>
+            </footer>
         </div>
     );
 }
