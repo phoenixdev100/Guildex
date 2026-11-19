@@ -4,6 +4,9 @@
    Scoped to .adm so nothing leaks into other routes.
    ============================================================ */
 
+html:has(.adm), html:has(.admLoader),
+body:has(.adm), body:has(.admLoader) { background: #fafbfe; }
+
 .adm {
   --ink: #0d1120;
   --muted: #565d75;
@@ -26,6 +29,7 @@
   --shadow-lg: 0 30px 80px rgba(23, 20, 60, .14);
 
   min-height: 100vh;
+  display: flex; flex-direction: column;
   background:
     radial-gradient(45% 35% at 12% 4%, rgba(108, 75, 244, .09), transparent 60%),
     radial-gradient(40% 40% at 92% 90%, rgba(90, 120, 255, .07), transparent 60%),
@@ -76,24 +80,21 @@
 
 /* ---------------- main ---------------- */
 .adm .admMain {
-  width: 100%; max-width: 1180px; margin: 0 auto;
-  padding: clamp(24px, 3.5vw, 44px) clamp(20px, 4vw, 48px) 72px;
+  width: 100%; max-width: 1440px; margin: 0 auto; flex: 1;
+  padding: clamp(20px, 2.5vw, 32px) clamp(16px, 2.5vw, 32px) 40px;
 }
-.adm .admHead { margin-bottom: 26px; }
-.adm .admKicker {
-  display: inline-flex; align-items: center; gap: 6px;
-  color: var(--purple); font-size: 11px; font-weight: 800;
-  letter-spacing: 1.6px; text-transform: uppercase; margin-bottom: 12px;
-}
+.adm .admHead { margin-bottom: 20px; text-align: center; }
 .adm .admHead h1 {
-  font-size: clamp(26px, 3vw, 36px); font-weight: 800;
-  letter-spacing: -.03em; color: var(--ink);
+  font-size: clamp(22px, 2.2vw, 28px); font-weight: 800;
+  letter-spacing: -.02em; color: var(--ink);
 }
-.adm .admHead p { font-size: 13.5px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
+.adm .admHead p { font-size: 12.5px; color: var(--muted); margin-top: 6px; line-height: 1.55; }
 
 /* ---------------- tabs (pill segmented, like .modTab) ---------------- */
 .adm .admTabs {
-  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 26px;
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin: 0 auto 22px;
+  width: fit-content;
 }
 .adm .admTab {
   display: inline-flex; align-items: center; gap: 7px;
@@ -117,35 +118,35 @@
 
 /* ---------------- stat cards ---------------- */
 .adm .statGrid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px; margin-bottom: 8px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px; margin-bottom: 8px;
 }
 .adm .stat {
   background: var(--card); border: 1px solid var(--line);
-  border-radius: var(--r-md); padding: 20px 22px; position: relative; overflow: hidden;
+  border-radius: var(--r-sm); padding: 12px 14px; position: relative; overflow: hidden;
   transition: .2s ease;
 }
 .adm .stat:hover { border-color: rgba(108, 75, 244, .4); box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .adm .statGlow {
-  position: absolute; right: -34px; top: -34px; width: 110px; height: 110px;
+  position: absolute; right: -28px; top: -28px; width: 80px; height: 80px;
   border-radius: 50%; background: radial-gradient(circle, rgba(108, 75, 244, .12), transparent 70%);
   pointer-events: none;
 }
 .adm .statIcon {
-  width: 38px; height: 38px; border-radius: 10px;
+  width: 28px; height: 28px; border-radius: 8px;
   display: grid; place-items: center;
-  background: var(--tint); color: var(--purple); margin-bottom: 14px;
+  background: var(--tint); color: var(--purple); margin-bottom: 8px;
 }
 .adm .stat:nth-child(2) .statIcon { background: #fceef3; color: #db2777; }
 .adm .stat:nth-child(3) .statIcon { background: #e8f7fd; color: #0891b2; }
 .adm .stat:nth-child(4) .statIcon { background: #edf4ff; color: #3b82f6; }
 .adm .stat:nth-child(5) .statIcon { background: #fdecec; color: #dc2626; }
 .adm .stat b {
-  display: block; font-size: 26px; font-weight: 800; letter-spacing: -.03em;
+  display: block; font-size: 19px; font-weight: 800; letter-spacing: -.03em;
   color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.05;
 }
-.adm .stat span { font-size: 11.5px; color: var(--faint); font-weight: 500; margin-top: 6px; display: block; }
-.adm .stat small { font-size: 10px; color: var(--purple); font-weight: 600; margin-left: 6px; }
+.adm .stat span { font-size: 10.5px; color: var(--faint); font-weight: 500; margin-top: 3px; display: block; }
+.adm .stat small { font-size: 9.5px; color: var(--purple); font-weight: 600; margin-left: 5px; }
 
 /* ---------------- glass card ---------------- */
 .adm .admCard {
@@ -158,19 +159,40 @@
 }
 .adm .admCardHead {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 18px 22px; border-bottom: 1px solid var(--line);
+  padding: 11px 18px; border-bottom: 1px solid var(--line);
 }
-.adm .admCardHead h2 { font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
-.adm .admCardHead p { font-size: 11.5px; color: var(--faint); margin-top: 3px; }
+.adm .admCardHead h2 { font-size: 13px; font-weight: 700; letter-spacing: -.01em; }
+.adm .admCardHead p { font-size: 10.5px; color: var(--faint); margin-top: 1px; }
 
 /* ---------------- toolbar (search + filters) ---------------- */
 .adm .admToolbar {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
-  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.adm .admToolbarMid {
+  flex: 1; display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: center; gap: 8px;
+}
+.adm .admCardHeadRight {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.adm .viewToggle {
+  display: inline-flex; gap: 2px; padding: 2px;
+  background: #f1f2f8; border: 1px solid var(--line); border-radius: 8px;
+}
+.adm .viewToggle button {
+  width: 28px; height: 26px; border: none; border-radius: 6px; cursor: pointer;
+  display: grid; place-items: center; color: var(--faint); background: transparent;
+  transition: .15s ease;
+}
+.adm .viewToggle button:hover { color: var(--purple); }
+.adm .viewToggle button.on {
+  background: #fff; color: var(--purple);
+  box-shadow: 0 1px 3px rgba(15, 20, 40, .12);
 }
 .adm .admSearch {
   display: flex; align-items: center; gap: 8px;
-  flex: 1; min-width: 220px; max-width: 340px; height: 38px;
+  flex: 1; min-width: 200px; max-width: 300px; height: 34px;
   background: #fff; border: 1px solid var(--line-strong); border-radius: 10px;
   padding: 0 14px; color: var(--faint);
   transition: .15s ease; box-shadow: var(--shadow-sm);
@@ -183,8 +205,8 @@
 .adm .admSearch input::placeholder { color: #a0a5b8; }
 .adm .admChips { display: flex; gap: 6px; flex-wrap: wrap; }
 .adm .admChip {
-  height: 32px; padding: 0 13px; border-radius: 999px; cursor: pointer;
-  font-size: 11.5px; font-weight: 600; color: var(--muted);
+  height: 30px; padding: 0 11px; border-radius: 999px; cursor: pointer;
+  font-size: 11px; font-weight: 600; color: var(--muted);
   background: #fff; border: 1px solid var(--line-strong);
   transition: .15s ease;
 }
@@ -194,25 +216,25 @@
 }
 
 /* ---------------- server rows ---------------- */
-.adm .admRows { padding: 6px 0; }
+.adm .admRows { padding: 4px 0; }
 .adm .admRow {
-  display: flex; align-items: center; gap: 14px;
-  padding: 13px 22px; transition: background .15s ease; position: relative;
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 16px; transition: background .15s ease; position: relative;
 }
 .adm .admRow:hover { background: #fafbfe; }
 .adm .admRow + .admRow { border-top: 1px solid var(--line); }
 .adm .admAvatar {
-  width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
   display: grid; place-items: center; overflow: hidden;
   background: var(--tint); color: var(--purple);
-  font-size: 17px; font-weight: 800;
+  font-size: 13px; font-weight: 800;
   border: 2px solid #fff; box-shadow: 0 3px 10px rgba(20, 24, 48, .12);
 }
 .adm .admAvatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .adm .admRowMain { flex: 1; min-width: 0; }
 .adm .admRowTitle { display: flex; align-items: center; gap: 8px; }
 .adm .admRowTitle b {
-  font-size: 13.5px; font-weight: 700; color: var(--ink);
+  font-size: 12.5px; font-weight: 700; color: var(--ink);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .adm .admRow:hover .admRowTitle b { color: var(--purple); }
@@ -223,8 +245,8 @@
 .adm .statusChip.on { color: #12834a; background: rgba(22, 163, 74, .1); border: 1px solid rgba(22, 163, 74, .25); }
 .adm .statusChip.off { color: var(--red); background: rgba(220, 38, 38, .08); border: 1px solid rgba(220, 38, 38, .2); }
 .adm .admRowMeta {
-  display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
-  margin-top: 4px; font-size: 11px; color: var(--faint); font-weight: 500;
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  margin-top: 2px; font-size: 10.5px; color: var(--faint); font-weight: 500;
 }
 .adm .admRowMeta svg { color: #a0a5b8; }
 .adm .admRowMeta i { font-style: normal; color: #c7cbd9; }
@@ -265,32 +287,200 @@
 }
 .adm .admEmpty p { color: var(--muted); margin-top: 6px; }
 
-/* ---------------- module rows ---------------- */
-.adm .modRow {
-  display: flex; align-items: center; gap: 16px;
-  padding: 15px 22px; transition: background .15s ease;
+.adm .admCard:not(.flush) {
+  max-width: 960px; margin-inline: auto;
 }
-.adm .modRow:hover { background: #fafbfe; }
-.adm .modRow + .modRow { border-top: 1px solid var(--line); }
-.adm .modIcon {
-  width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+.adm .admCard.wide {
+  max-width: 1360px;
+}
+.adm .admCard.flush {
+  background: transparent;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  border: none; box-shadow: none; border-radius: 0; overflow: visible;
+}
+.adm .admCard.flush .admCardHead {
+  border-bottom: none; padding: 0 6px 10px; background: transparent;
+}
+
+/* ---------------- server grid cards (select-server style) ---------------- */
+.adm .srvGrid {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 12px; padding: 4px 2px 6px;
+}
+.adm .srvCard {
+  width: 180px; flex-shrink: 0;
+  background: #fff; border: 1px solid var(--line); border-radius: 12px;
+  padding-bottom: 10px; display: flex; flex-direction: column; align-items: center;
+  text-align: center; position: relative; overflow: hidden;
+  transition: .18s ease;
+}
+.adm .srvCard:hover {
+  border-color: rgba(108, 75, 244, .45);
+  box-shadow: 0 12px 30px rgba(20, 24, 48, .1);
+  transform: translateY(-2px);
+}
+.adm .srvCardBanner {
+  width: 100%; height: 62px; position: relative;
   display: grid; place-items: center;
-  background: var(--tint); color: var(--purple);
+  background:
+    radial-gradient(80% 120% at 50% 0%, rgba(255,255,255,.55), transparent 70%),
+    linear-gradient(135deg, #dcd8fb, #d5e4fb);
 }
+.adm .srvCardIcon {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center; overflow: hidden;
+  background: #fff; color: var(--purple);
+  font-size: 15px; font-weight: 800;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 14px rgba(20, 24, 48, .14);
+}
+.adm .srvCardIcon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.adm .srvCardBanner .statusChip {
+  position: absolute; top: 8px; left: 8px;
+}
+.adm .srvCardName {
+  font-size: 12.5px; font-weight: 700; color: var(--ink); letter-spacing: -.01em;
+  margin-top: 9px; padding: 0 10px;
+  max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.adm .srvCard:hover .srvCardName { color: var(--purple); }
+.adm .srvCardMeta {
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  margin-top: 4px; font-size: 10.5px; color: var(--faint); font-weight: 500;
+}
+.adm .srvCardMeta svg { color: #a0a5b8; flex-shrink: 0; }
+.adm .srvCardMeta + .srvCardMeta { margin-top: 2px; }
+
+/* hover overlay - card content blurs, Manage button appears */
+.adm .srvGo {
+  position: absolute; inset: 0; z-index: 3;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(250, 251, 255, .55);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  opacity: 0; transition: .18s ease;
+}
+.adm .srvCard:hover .srvGo { opacity: 1; }
+.adm .srvGoBtn {
+  display: inline-flex; align-items: center; gap: 5px;
+  height: 30px; padding: 0 14px; border-radius: 8px;
+  background: var(--ink); color: #fff;
+  font-size: 11.5px; font-weight: 700; letter-spacing: -.01em;
+  box-shadow: 0 8px 22px rgba(20, 24, 48, .25);
+  border: none; cursor: pointer;
+  transform: scale(.92) translateY(3px);
+  transition: .18s ease;
+}
+.adm .srvCard:hover .srvGoBtn { transform: scale(1) translateY(0); }
+.adm .srvGoBtn.danger { background: var(--red); }
+.adm .srvGoBtn.danger:hover { background: #b91c1c; }
+
+/* ---------------- module grid cards ---------------- */
+.adm .modGrid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 8px; padding: 4px 2px 6px;
+}
+.adm .modCard {
+  background: rgba(255, 255, 255, .72);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(230, 232, 243, .85);
+  border-radius: var(--r-sm);
+  padding: 10px 12px; transition: .2s ease;
+  display: flex; flex-direction: column;
+  box-shadow: var(--shadow-sm);
+}
+.adm .modCard:hover {
+  border-color: rgba(108, 75, 244, .4);
+  box-shadow: var(--shadow-md); transform: translateY(-2px);
+}
+.adm .modCard:hover {
+  border-color: rgba(108, 75, 244, .4); box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.adm .modCardTop {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 6px;
+}
+.adm .modCardTop .modIcon { width: 22px; height: 22px; border-radius: 6px; background: rgba(108,75,244,.1); }
+.adm .modCardTop .modIcon svg { width: 12px; height: 12px; }
+.adm .modCardName { font-size: 11.5px; font-weight: 700; color: var(--ink); }
+.adm .modCard .catChip { margin-top: 4px; align-self: flex-start; font-size: 8px; padding: 1px 6px; }
+.adm .modCardDesc {
+  font-size: 10px; color: var(--faint); margin-top: 4px; line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; flex: 1;
+}
+.adm .modCardState {
+  font-size: 9.5px; font-weight: 600; margin-top: 6px;
+  color: var(--green);
+}
+.adm .modCardState.off { color: var(--faint); }
+.adm .modCard .modCoverage { margin-top: 6px; }
+.adm .modCard .modBar { width: 70px; height: 4px; }
+
+/* ---------------- module rows ---------------- */
+/* ---------------- module list rows (glassmorphism cards) ---------------- */
+.adm .modList {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 4px 2px 6px;
+}
+.adm .modRow {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, .65);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(230, 232, 243, .8);
+  border-radius: var(--r-md);
+  transition: .2s ease;
+  box-shadow: var(--shadow-sm);
+}
+.adm .modRow:hover {
+  border-color: rgba(108, 75, 244, .35);
+  background: rgba(255, 255, 255, .85);
+  box-shadow: var(--shadow-md); transform: translateY(-1px);
+}
+.adm .modIcon {
+  width: 40px; height: 40px; border-radius: 11px; flex-shrink: 0;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, rgba(108,75,244,.15), rgba(108,75,244,.08));
+  color: var(--purple);
+  border: 1px solid rgba(108,75,244,.18);
+}
+.adm .modIcon svg { width: 17px; height: 17px; }
 .adm .modRowMain { flex: 1; min-width: 0; }
 .adm .modRowTitle { display: flex; align-items: center; gap: 8px; }
-.adm .modRowTitle b { font-size: 13px; font-weight: 700; color: var(--ink); }
+.adm .modRowTitle b { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -.01em; }
+.adm .modRow:hover .modRowTitle b { color: var(--purple); }
 .adm .catChip {
   font-size: 8.5px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
   padding: 2px 7px; border-radius: 999px;
-  color: var(--muted); background: #f1f2f8; border: 1px solid var(--line);
+  color: var(--purple); background: rgba(108,75,244,.08); border: 1px solid rgba(108,75,244,.2);
 }
-.adm .modRowDesc { font-size: 11.5px; color: var(--faint); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.adm .modRowDesc {
+  font-size: 11px; color: var(--faint); margin-top: 2px; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 1; line-clamp: 1; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.adm .modRowCoverage {
+  display: flex; align-items: center; gap: 8px; margin-top: 6px;
+}
+.adm .modRowCoverage .modBar { width: 90px; }
+.adm .modRowCoverage small { font-size: 10px; color: var(--faint); font-weight: 500; }
+.adm .modRowState {
+  font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px;
+  flex-shrink: 0;
+}
+.adm .modRowState.on {
+  color: #12834a; background: rgba(22,163,74,.1); border: 1px solid rgba(22,163,74,.25);
+}
+.adm .modRowState.off {
+  color: var(--faint); background: #f1f2f8; border: 1px solid var(--line);
+}
+.adm .modRow .sw { flex-shrink: 0; }
 .adm .modCoverage {
-  display: flex; align-items: center; gap: 8px; margin-top: 8px;
+  display: flex; align-items: center; gap: 8px; margin-top: 5px;
 }
 .adm .modBar {
-  width: 110px; height: 5px; border-radius: 99px;
+  width: 90px; height: 4px; border-radius: 99px;
   background: #eef0f6; overflow: hidden; flex-shrink: 0;
 }
 .adm .modBar i {
@@ -303,28 +493,51 @@
 .adm .sw {
   position: relative; width: 40px; height: 22px; border-radius: 99px;
   background: #d4d8e6; border: none; cursor: pointer; flex-shrink: 0;
-  transition: .18s ease; padding: 0;
+  transition: background .3s cubic-bezier(.4,0,.2,1); padding: 0; align-self: center;
+  overflow: hidden;
 }
-.adm .sw::after {
+.adm .sw::before {
   content: ""; position: absolute; top: 3px; left: 3px;
   width: 16px; height: 16px; border-radius: 50%;
-  background: #fff; box-shadow: 0 1px 3px rgba(15,20,40,.25);
-  transition: .18s ease;
+  background: #fff; box-shadow: 0 1px 3px rgba(15,20,40,.3);
+  transition: transform .3s cubic-bezier(.34,1.45,.64,1);
 }
 .adm .sw.on { background: #22c55e; }
-.adm .sw.on::after { left: auto; right: 3px; }
+.adm .sw.on::before { transform: translateX(18px); }
+.adm .sw:active::before { transform: translateX(18px) scale(.88); }
+.adm .sw:not(.on):active::before { transform: translateX(0) scale(.88); }
+.adm .sw.on:active::before { transform: translateX(18px) scale(.88); }
 .adm .sw:disabled { opacity: .5; cursor: wait; }
+
+.adm .modMiniBar {
+  display: inline-block; width: 48px; height: 4px; border-radius: 99px;
+  background: #eef0f6; overflow: hidden; vertical-align: middle;
+}
+.adm .modMiniBar i {
+  display: block; height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, #8b74ff, #6c4bf4);
+}
+.adm .admRow .sw { flex-shrink: 0; }
+.adm .admRowAct .catChip { margin-right: 8px; }
+.adm .rowCenterChip {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  font-size: 8.5px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+  pointer-events: none;
+}
+.adm .rowCenterChip.on { color: #12834a; background: rgba(22, 163, 74, .1); border: 1px solid rgba(22, 163, 74, .25); }
+.adm .rowCenterChip.off { color: var(--red); background: rgba(220, 38, 38, .08); border: 1px solid rgba(220, 38, 38, .25); }
 
 /* ---------------- activity feed ---------------- */
 .adm .actRow {
-  display: flex; align-items: center; gap: 14px;
-  padding: 13px 22px; transition: background .15s ease;
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 16px; transition: background .15s ease;
 }
 .adm .actRow:hover { background: #fafbfe; }
 .adm .actRow + .actRow { border-top: 1px solid var(--line); }
 .adm .actIcon {
-  width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
-  display: grid; place-items: center; font-size: 15px;
+  width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+  display: grid; place-items: center; font-size: 13px;
   background: #f4f5fb; border: 1px solid var(--line);
 }
 .adm .actMain { flex: 1; min-width: 0; }
@@ -332,14 +545,57 @@
 .adm .actMain small { font-size: 11px; color: var(--faint); }
 .adm .actTime { font-size: 10.5px; color: var(--faint); flex-shrink: 0; font-variant-numeric: tabular-nums; }
 
+/* ---------------- guild history panel ---------------- */
+.adm .histPanel {
+  padding: 4px 16px 12px 62px;
+  border-top: 1px dashed var(--line);
+  background: #fafbfe;
+}
+.adm .histRow {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 0;
+}
+.adm .histRow + .histRow { border-top: 1px solid rgba(230, 232, 243, .6); }
+.adm .histIcon { font-size: 13px; flex-shrink: 0; width: 18px; text-align: center; }
+.adm .histMain { flex: 1; min-width: 0; }
+.adm .histMain b { font-size: 11.5px; font-weight: 600; color: var(--ink); display: block; }
+.adm .histMain small { font-size: 10px; color: var(--faint); display: block; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.adm .histTime { font-size: 10px; color: var(--faint); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.adm .histEmpty { font-size: 11.5px; color: var(--faint); padding: 10px 0; }
+.adm .histLoading { display: flex; justify-content: center; padding: 12px 0; }
+.adm .histLoading .spin { width: 20px; height: 20px; border-width: 2px; }
+.adm .admBtnGhost.on {
+  color: var(--purple); border-color: rgba(108, 75, 244, .45); background: rgba(108, 75, 244, .06);
+}
+
+/* ---------------- footer ---------------- */
+.adm .admFoot {
+  border-top: 1px solid var(--line);
+  background: rgba(255, 255, 255, .6);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.adm .admFootInner {
+  width: 100%;
+  padding: 16px clamp(20px, 4vw, 48px);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+}
+.adm .admFootBrand {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12.5px; font-weight: 700; color: var(--ink);
+}
+.adm .admFootBrand img { width: 20px; height: 20px; object-fit: contain; display: block; }
+.adm .admFootText { font-size: 11px; color: var(--faint); font-weight: 500; }
+.adm .admFootCopy { font-size: 11px; color: var(--faint); }
+
 /* ---------------- loader / denied ---------------- */
-.adm .admLoader {
+.adm .admLoader, .adm.admLoader {
   min-height: 100vh; display: grid; place-items: center;
   background: radial-gradient(45% 35% at 12% 4%, rgba(108, 75, 244, .09), transparent 60%), #fafbfe;
 }
-.adm .spin {
+.adm .spin, .admLoader .spin {
   width: 34px; height: 34px; border-radius: 50%;
-  border: 3px solid var(--line); border-top-color: var(--purple);
+  border: 3px solid var(--line, #e6e8f3); border-top-color: var(--purple, #6c4bf4);
   animation: admSpin .7s linear infinite;
 }
 @keyframes admSpin { to { transform: rotate(360deg); } }
