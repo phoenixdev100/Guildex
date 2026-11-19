@@ -150,6 +150,90 @@ export async function dashboardRoutes(app: FastifyInstance): Promise<void> {
     });
 
     /**
+     * GET /api/dashboard/admin/guilds/:guildId/history
+     * Unified per-guild timeline: joins, leaves, bot actions,
+     * moderation cases and audit log entries. Super admin only.
+     */
+    app.get('/admin/guilds/:guildId/history', async (request, reply) => {
+        if (!isSuperAdminRequest(request)) {
+            return reply.status(403).send({ error: 'Forbidden' });
+        }
+        const { guildId } = request.params as { guildId: string };
+        try {
+            const [guild, auditLogs, cases, botActions] = await Promise.all([
+                prisma.guild.findUnique({
+                    where: { id: guildId },
+                    select: { joinedAt: true, leftAt: true, isActive: true },
+                }),
+                prisma.auditLog.findMany({
+                    where: { guildId },
+                    orderBy: { createdAt: 'desc' },
+                    take: 100,
+                    include: {
+                        user: { select: { username: true, discriminator: true } },
+                    },
+                }),
+                prisma.moderationCase.findMany({
+                    where: { guildId },
+                    orderBy: { createdAt: 'desc' },
+                    take: 100,
+                    include: {
+                        target: { select: { username: true, discriminator: true } },
+                        moderator: { select: { username: true, discriminator: true } },
+                    },
+                }),
+                prisma.botAction.findMany({
+                    where: { guildId },
+                    orderBy: { createdAt: 'desc' },
+                    take: 50,
+                }),
+            ]);
+
+            const uname = (u?: { username: string; discriminator?: string | null } | null) =>
+                u ? `${u.username}${u.discriminator ? `#${u.discriminator}` : ''}` : 'Unknown';
+
+            const events: { id: string; icon: string; action: string; detail: string; time: string }[] = [];
+
+            if (guild?.joinedAt) {
+                events.push({ id: 'join', icon: '🟢', action: 'Bot joined server', detail: '', time: guild.joinedAt.toISOString() });
+            }
+            if (guild?.leftAt) {
+                events.push({ id: 'left', icon: '🔴', action: 'Bot left server', detail: '', time: guild.leftAt.toISOString() });
+            }
+            for (const a of botActions) {
+                events.push({
+                    id: `ba-${a.id}`, icon: '🤖',
+                    action: a.type === 'LEAVE_GUILD' ? 'Bot leave requested' : a.type,
+                    detail: `status: ${a.status}${a.error ? ` • ${a.error}` : ''}`,
+                    time: a.createdAt.toISOString(),
+                });
+            }
+            for (const c of cases) {
+                events.push({
+                    id: `case-${c.id}`, icon: '🛡️',
+                    action: `${c.type} — case #${c.caseNumber}`,
+                    detail: `target: ${uname(c.target)} • by ${uname(c.moderator)}${c.reason ? ` • ${c.reason}` : ''}`,
+                    time: c.createdAt.toISOString(),
+                });
+            }
+            for (const l of auditLogs) {
+                events.push({
+                    id: `log-${l.id}`, icon: '📋',
+                    action: l.action,
+                    detail: `${l.resource}${l.resourceId ? `/${l.resourceId}` : ''} • by ${uname(l.user)}`,
+                    time: l.createdAt.toISOString(),
+                });
+            }
+
+            events.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+            return { events: events.slice(0, 100), isActive: guild?.isActive ?? false };
+        } catch (error) {
+            request.log.error(error);
+            return reply.status(500).send({ error: 'Failed to fetch guild history' });
+        }
+    });
+
+    /**
      * GET /api/dashboard/stats
      * Get overall dashboard statistics
      */
